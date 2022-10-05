@@ -1,23 +1,22 @@
 {
-  "name": "api-praktikportalen",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "todolist",
+  "version": "0.0.0",
+  "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "npx nodemon src/connection.js -w connection"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "nodemon": "^2.0.15"
+    "start": "node ./bin/www"
   },
   "dependencies": {
-    "body-parser": "^1.20.0",
-    "cors": "^2.8.5",
-    "express": "^4.18.1",
-    "helmet": "^6.0.0",
-    "morgan": "^1.10.0"
+    "@azure/identity": "^2.0.4",
+    "@azure/keyvault-secrets": "^4.4.0",
+    "bootstrap": "^5.1.3",
+    "cookie-parser": "~1.4.4",
+    "date-fns": "^2.25.0",
+    "debug": "~2.6.9",
+    "dotenv": "^10.0.0",
+    "express": "~4.16.1",
+    "http-errors": "~1.6.3",
+    "mongoose": "^6.0.12",
+    "morgan": "~1.9.1",
+    "pug": "2.0.0-beta11"
   }
 }
