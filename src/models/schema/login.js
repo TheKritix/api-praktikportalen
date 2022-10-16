@@ -1,0 +1,58 @@
+const loginEmployerSchema = {
+    email: String,
+    password: String, 
+    // role: String,
+    // name: String,
+    // phone: String,
+    // company: String,
+    // companyPhone: String,
+    // companyEmail: String,
+    // companyAddress: String,
+    // companyZip: String,
+    // companyCity: String,
+    // companyCVR: String,
+    // companyWebsite: String,
+    // companyDescription: String,
+    // companyLogo: String,
+    // companyContactPerson: String,
+    // companyContactPersonPhone: String,
+    // companyContactPersonEmail: String,
+    // companyContactPersonPosition: String,
+    // companyContactPersonDescription: String,
+}
+
+const loginStudentSchema = {
+    email: String,
+    password: String,
+    role: String,
+    name: String,
+    phone: String,
+    studentID: String,
+    studentClass: String,
+    studentSemester: String,
+    studentEducation: String,
+    studentEducationStart: String,
+    studentEducationEnd: String,
+    studentEducationDescription: String,
+    studentEducationProfileImage: String,
+    studentEducationWebsite: String,
+    studentEducationAddress: String,
+    studentEducationZip: String,
+    studentEducationCity: String,
+    studentEducationContactPerson: String,
+    studentEducationContactPersonPhone: String,
+    studentEducationContactPersonEmail: String,
+    studentEducationContactPersonPosition: String,
+    studentEducationContactPersonDescription: String,
+    studentEducationContactPersonLogo: String,
+    studentEducationContactPersonWebsite: String,
+    studentEducationContactPersonAddress: String,
+    studentEducationContactPersonZip: String,
+    studentEducationContactPersonCity: String,
+}
+
+module.exports = Object.freeze({
+    loginEmployerSchema,
+    loginStudentSchema
+});
+

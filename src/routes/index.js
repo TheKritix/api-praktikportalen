@@ -1,18 +1,22 @@
-const express = require('express');
-
+const express = require("express");
 const router = express.Router();
 
-router.get('/test', async (req, res, next) => {
-    try {
-      console.log(req.headers["x-real-ip"])
-      let results = "this is text message"
-      res.json(results);
-  
-    }
-    catch(e){
-      console.log(e)
-      res.sendStatus(500)
-    }
-  });
+const { EmployerLogin } = require("../models/models");
 
-  module.exports = router;
+router.get("/test", async (req, res, next) => {
+  try {
+    console.log(req.headers["x-real-ip"]);
+    let results = "this is text message";
+    res.json(results);
+  } catch (e) {
+    console.log(e);
+    res.sendStatus(500);
+  }
+});
+
+router.get("/employerLogin", async (req, res, next) => {
+  const allEmployers = await EmployerLogin.find();
+  return res.status(200).json(allEmployers);
+});
+
+module.exports = router;
