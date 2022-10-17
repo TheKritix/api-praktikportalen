@@ -1,7 +1,8 @@
 //Source https://hevodata.com/learn/building-a-secure-node-js-rest-api/
 
-const mongoose = require("mongoose");
 require("dotenv").config();
+
+const mongoose = require("mongoose");
 
 const express = require("express");
 const apiRouter = require("./routes");
@@ -9,17 +10,23 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const helmet = require("helmet");
 const morgan = require("morgan");
-const db = require("./models");
-const dbConfig = require("./config/db.config");
-const Role = db.role;
+const modelContainer = require("./models");
+const Role = modelContainer.role;
 
 const app = express();
 
-db.mongoose
-  .connect(`mongodb://${dbConfig.HOST}:${dbConfig.PORT}/${dbConfig.DB}`, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+const __user = process.env.MONGO_INITDB_ROOT_USERNAME;
+const __password = process.env.MONGO_INITDB_ROOT_PASSWORD;
+const __host = process.env.MONGO_INITDB_HOST;
+
+mongoose
+  .connect(
+    `mongodb://${__user}:${__password}@${__host}.dtu.praktikportal.diplomportal.dk:6543/admin`,
+    {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    }
+  )
   .then(() => {
     console.log("Successfully connect to MongoDB.");
     initialConfiguration();
@@ -45,7 +52,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(express.static("./public"));
 
-//app.use("/api", apiRouter);
+app.use("/api", apiRouter);
 
 require("./routes/auth.routes")(app);
 require("./routes/user.routes")(app);

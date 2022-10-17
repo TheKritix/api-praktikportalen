@@ -1,13 +1,8 @@
-const mongoose = require("mongoose");
-mongoose.Promise = global.Promise;
+const modelContainer = {
+    employer: require("./employer.model.js"),
+    //student: require("./student.model.js"),
+    role: require("./role.model.js"),
+    ROLES: ["user", "admin"]
+};
 
-const db = {};
-
-db.mongoose = mongoose;
-
-db.employer = require("./employer.model");
-db.role = require("./role.model");
-
-db.ROLES = ["user", "admin"];
-
-module.exports = db;
+module.exports = modelContainer;
