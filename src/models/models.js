@@ -1,8 +1,13 @@
-const login = require ('./schema/login.js');
-const mongoose = require ('mongoose');
+/*
+const login = require("./schema/login.js");
+const mongoose = require("mongoose");
 
-const EmployerLogin = mongoose.model("EmployerLogin", login.loginEmployerSchema); 
-
+const Employer = mongoose.model("Employer", login.loginEmployerSchema);
+const Student = mongoose.model("Student", login.loginStudentSchema);
+const Role = mongoose.model("Role", login.roleSchema);
 module.exports = {
-    EmployerLogin
+  Employer,
+  Student,
+  Role,
 };
+*/
