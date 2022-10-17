@@ -12,6 +12,7 @@ const morgan = require("morgan");
 const db = require("./models");
 const dbConfig = require("./config/db.config");
 const Role = db.role;
+
 const app = express();
 
 db.mongoose
