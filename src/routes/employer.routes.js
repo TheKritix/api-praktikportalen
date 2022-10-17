@@ -13,6 +13,8 @@ router.use(function (req, res, next) {
 
 router.get("/test/all", controller.allAccess);
 
+router.get("/employers", controller.getEmployers);
+
 router.get("/test/user", [authJwt.verifyToken], controller.userBoard);
 
 router.get(
