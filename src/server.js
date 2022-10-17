@@ -3,10 +3,6 @@
 const mongoose = require("mongoose");
 require("dotenv").config();
 
-const __user = process.env.MONGO_INITDB_ROOT_USERNAME;
-const __password = process.env.MONGO_INITDB_ROOT_PASSWORD;
-const __host = process.env.MONGO_INITDB_HOST;
-
 const express = require("express");
 const apiRouter = require("./routes");
 const bodyParser = require("body-parser");
