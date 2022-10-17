@@ -19,4 +19,9 @@ router.get("/employerLogin", async (req, res, next) => {
   return res.status(200).json(allEmployers);
 });
 
+router.post("/add", async (req, res, next) => {
+  const addEmployer = await EmployerLogin.create(req.body);
+  return res.status(201).json(addEmployer);
+});
+
 module.exports = router;
