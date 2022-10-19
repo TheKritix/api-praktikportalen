@@ -63,7 +63,7 @@ exports.signup = (req, res) => {
 };
 
 exports.signin = (req, res) => {
-  User.findOne({
+  Employer.findOne({
     username: req.body.username,
   })
     .populate("roles", "-__v")
