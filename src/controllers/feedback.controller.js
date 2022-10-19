@@ -20,3 +20,16 @@ exports.postFeedback = (req, res) => {
 
     });
 };
+
+
+
+
+exports.getFeedback = (req, res) => {
+    Feedback.find()
+        .then((feedback) => {
+            res.status(200).send(feedback);
+        })
+        .catch((err) => {
+            res.status(500).send({message: err.message});
+        })
+};
