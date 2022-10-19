@@ -12,6 +12,7 @@ router.use(function (req, res, next) {
   });
 
 
-router.post("/postFeedback", controller.postFeedback);
+router.post("/feedback", controller.postFeedback);
+router.get("/feedback", controller.getFeedback)
 
 module.exports = router;
