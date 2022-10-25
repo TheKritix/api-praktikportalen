@@ -5,6 +5,7 @@ const roleSchema = {
 };
 
 const employerSchema = {
+  username: String,
   email: String,
   password: String,
   roles: [
