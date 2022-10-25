@@ -14,9 +14,11 @@ router.use(function (req, res, next) {
 router.post(
   "/auth/signup",
   [verifySignUp.checkDuplicateUsernameOrEmail, verifySignUp.checkRolesExisted],
-  controller.signup
+  controller.employerSignup
 );
 
-router.post("/auth/signin", controller.signin);
+router.post("/auth/signin", controller.employerSignin);
+
+router.post("/auth/refreshtoken", controller.refreshToken);
 
 module.exports = router;
