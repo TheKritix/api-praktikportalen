@@ -4,4 +4,5 @@ module.exports = Object.freeze({
   role: require("./role.model.js"),
   refreshToken: require("./refreshToken.model.js"),
   ROLES: ["user", "admin"],
+  feedback: require("./feedback.model.js"),
 });
