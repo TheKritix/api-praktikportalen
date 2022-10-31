@@ -35,11 +35,12 @@ const employerSchema = {
 };
 
 const studentSchema = {
-  email: String,
-  password: String,
-  name: String,
-  // role: String,
   studentID: String,
+  name: String,
+  email: String,
+  
+  // role: String,
+  
   // phone: String,
   // studentSemester: String,
   // studentClass: String,
