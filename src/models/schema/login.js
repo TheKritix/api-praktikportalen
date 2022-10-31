@@ -38,9 +38,14 @@ const studentSchema = {
   studentID: String,
   name: String,
   email: String,
-  
+  roles: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Role",
+    },
+  ],
   // role: String,
-  
+
   // phone: String,
   // studentSemester: String,
   // studentClass: String,

@@ -8,7 +8,44 @@ const RefreshToken = db.refreshToken;
 var jwt = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
 
-exports.studentSignin = (req, res) => {
+const studentSignin = async (req, res) => {
+  Student.findOne({
+    studentID: req.body.studentID,
+  })
+    .populate("roles", "-__v")
+    .exec(async (err, student) => {
+      if (err) {
+        res.status(500).send({ message: err });
+        return;
+      }
+      console.log(student);
+      if (student != null) {
+        var token = jwt.sign({ id: student.id }, config.secret, {
+          expiresIn: config.jwtExpiration,
+        });
+
+        let refreshToken = await RefreshToken.createToken(student);
+        var authorities = [];
+        for (let i = 0; i < student.roles.length; i++) {
+          authorities.push("ROLE_" + student.roles[i].name.toUpperCase());
+        }
+        res.status(200).send({
+          id: student._id,
+          studentID: student.studentID,
+          name: student.name,
+          email: student.email,
+          roles: authorities,
+          accessToken: token,
+          refreshToken: refreshToken,
+        });
+      } else {
+        studentSignin(req, res);
+        return;
+      }
+    });
+};
+
+exports.studentSignup = (req, res) => {
   Student.findOne({
     studentID: req.body.studentID,
   })
@@ -50,7 +87,7 @@ exports.studentSignin = (req, res) => {
                     return;
                   }
 
-                  res.send({ message: "Student was registered successfully!" });
+                  //res.send({ message: "Student was registered successfully!" });
                 });
               }
             );
@@ -68,33 +105,13 @@ exports.studentSignin = (req, res) => {
                   return;
                 }
 
-                res.send({ message: "Student was registered successfully!" });
+                //res.send({ message: "Student was registered successfully!" });
               });
             });
           }
         });
       }
-
-      var token = jwt.sign({ id: student.id }, config.secret, {
-        expiresIn: config.jwtExpiration,
-      });
-
-      let refreshToken = await RefreshToken.createToken(student);
-
-      var authorities = [];
-
-      for (let i = 0; i < student.roles.length; i++) {
-        authorities.push("ROLE_" + student.roles[i].name.toUpperCase());
-      }
-      res.status(200).send({
-        id: student._id,
-        studentID: student.studentID,
-        name: student.name,
-        email: student.email,
-        roles: authorities,
-        accessToken: token,
-        refreshToken: refreshToken,
-      });
+      studentSignin(req, res);
     });
 };
 

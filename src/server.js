@@ -22,8 +22,8 @@ const __host = process.env.MONGO_INITDB_HOST;
 console.log(__user, __password, __host);
 mongoose
   .connect(
-    `mongodb://${__user}:${__password}@${__host}/admin`,
-    //"mongodb://localhost:27017/admin",
+    //`mongodb://${__user}:${__password}@${__host}/admin`,
+    "mongodb://localhost:27017/admin",
     {
       useNewUrlParser: true,
       useUnifiedTopology: true,
