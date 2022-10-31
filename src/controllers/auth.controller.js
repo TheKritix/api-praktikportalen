@@ -1,11 +1,103 @@
 const config = require("../config/auth.config.js");
 const db = require("../models");
 const Employer = db.employer;
+const Student = db.student;
 const Role = db.role;
 const RefreshToken = db.refreshToken;
 
 var jwt = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
+
+exports.studentSignin = (req, res) => {
+  Student.findOne({
+    studentID: req.body.studentID,
+  })
+    .populate("roles", "-__v")
+    .exec(async (err, student) => {
+      if (err) {
+        res.status(500).send({ message: err });
+        return;
+      }
+
+      if (!student) {
+        const student = new Student({
+          studentID: req.body.studentID,
+          name: req.body.name,
+          email: req.body.email,
+        });
+
+        student.save((err, student) => {
+          if (err) {
+            res.status(500).send({ message: err });
+            return;
+          }
+
+          if (req.body.roles) {
+            Role.find(
+              {
+                name: { $in: req.body.roles },
+              },
+              (err, roles) => {
+                if (err) {
+                  res.status(500).send({ message: err });
+                  return;
+                }
+
+                student.roles = roles.map((role) => role._id);
+                student.save((err) => {
+                  if (err) {
+                    res.status(500).send({ message: err });
+                    return;
+                  }
+
+                  res.send({ message: "Student was registered successfully!" });
+                });
+              }
+            );
+          } else {
+            Role.findOne({ name: "user" }, (err, role) => {
+              if (err) {
+                res.status(500).send({ message: err });
+                return;
+              }
+
+              student.roles = [role._id];
+              student.save((err) => {
+                if (err) {
+                  res.status(500).send({ message: err });
+                  return;
+                }
+
+                res.send({ message: "Student was registered successfully!" });
+              });
+            });
+          }
+        });
+      }
+
+      var token = jwt.sign({ id: student.id }, config.secret, {
+        expiresIn: config.jwtExpiration,
+      });
+
+      let refreshToken = await RefreshToken.createToken(student);
+
+      var authorities = [];
+
+      for (let i = 0; i < student.roles.length; i++) {
+        authorities.push("ROLE_" + student.roles[i].name.toUpperCase());
+      }
+      res.status(200).send({
+        id: student._id,
+        studentID: student.studentID,
+        name: student.name,
+        email: student.email,
+        roles: authorities,
+        accessToken: token,
+        refreshToken: refreshToken,
+      });
+    });
+};
+
 /* Employer Auth */
 exports.employerSignup = (req, res) => {
   const employer = new Employer({

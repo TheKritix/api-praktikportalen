@@ -21,4 +21,6 @@ router.post("/auth/signin", controller.employerSignin);
 
 router.post("/auth/refreshtoken", controller.refreshToken);
 
+router.post("/auth/studentsignin", controller.studentSignin);
+
 module.exports = router;
