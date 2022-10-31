@@ -8,7 +8,7 @@ const RefreshToken = db.refreshToken;
 var jwt = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
 
-const studentSignin = async (req, res) => {
+exports.studentSignin = (req, res) => {
   Student.findOne({
     studentID: req.body.studentID,
   })
@@ -19,100 +19,87 @@ const studentSignin = async (req, res) => {
         return;
       }
       console.log(student);
-      if (student != null) {
-        var token = jwt.sign({ id: student.id }, config.secret, {
-          expiresIn: config.jwtExpiration,
-        });
-
-        let refreshToken = await RefreshToken.createToken(student);
-        var authorities = [];
-        for (let i = 0; i < student.roles.length; i++) {
-          authorities.push("ROLE_" + student.roles[i].name.toUpperCase());
-        }
-        res.status(200).send({
-          id: student._id,
-          studentID: student.studentID,
-          name: student.name,
-          email: student.email,
-          roles: authorities,
-          accessToken: token,
-          refreshToken: refreshToken,
-        });
-      } else {
-        studentSignin(req, res);
+      if (student == null) {
+        studentSignup(req, res);
+        this.studentSignin(req, res);
         return;
       }
+      var token = jwt.sign({ id: student.id }, config.secret, {
+        expiresIn: config.jwtExpiration,
+      });
+
+      let refreshToken = await RefreshToken.createToken(student);
+      var authorities = [];
+      for (let i = 0; i < student.roles.length; i++) {
+        authorities.push("ROLE_" + student.roles[i].name.toUpperCase());
+      }
+      console.log("Roless" + authorities);
+      res.status(200).send({
+        id: student._id,
+        studentID: student.studentID,
+        name: student.name,
+        email: student.email,
+        roles: authorities,
+        accessToken: token,
+        refreshToken: refreshToken,
+      });
     });
 };
 
-exports.studentSignup = (req, res) => {
-  Student.findOne({
+const studentSignup = (req, res) => {
+  const student = new Student({
     studentID: req.body.studentID,
-  })
-    .populate("roles", "-__v")
-    .exec(async (err, student) => {
-      if (err) {
-        res.status(500).send({ message: err });
-        return;
-      }
+    name: req.body.name,
+    email: req.body.email,
+  });
 
-      if (!student) {
-        const student = new Student({
-          studentID: req.body.studentID,
-          name: req.body.name,
-          email: req.body.email,
-        });
+  student.save((err, student) => {
+    if (err) {
+      res.status(500).send({ message: err });
+      return;
+    }
 
-        student.save((err, student) => {
+    if (req.body.roles) {
+      Role.find(
+        {
+          name: { $in: req.body.roles },
+        },
+        (err, roles) => {
           if (err) {
             res.status(500).send({ message: err });
             return;
           }
 
-          if (req.body.roles) {
-            Role.find(
-              {
-                name: { $in: req.body.roles },
-              },
-              (err, roles) => {
-                if (err) {
-                  res.status(500).send({ message: err });
-                  return;
-                }
+          student.roles = roles.map((role) => role._id);
+          student.save((err) => {
+            if (err) {
+              res.status(500).send({ message: err });
+              return;
+            }
 
-                student.roles = roles.map((role) => role._id);
-                student.save((err) => {
-                  if (err) {
-                    res.status(500).send({ message: err });
-                    return;
-                  }
+            //res.send({ message: "Student was registered successfully!" });
+          });
+        }
+      );
+    } else {
+      Role.findOne({ name: "user" }, (err, role) => {
+        if (err) {
+          res.status(500).send({ message: err });
+          return;
+        }
 
-                  //res.send({ message: "Student was registered successfully!" });
-                });
-              }
-            );
-          } else {
-            Role.findOne({ name: "user" }, (err, role) => {
-              if (err) {
-                res.status(500).send({ message: err });
-                return;
-              }
-
-              student.roles = [role._id];
-              student.save((err) => {
-                if (err) {
-                  res.status(500).send({ message: err });
-                  return;
-                }
-
-                //res.send({ message: "Student was registered successfully!" });
-              });
-            });
+        student.roles = [role._id];
+        student.save((err) => {
+          if (err) {
+            res.status(500).send({ message: err });
+            return;
           }
+
+          //res.send({ message: "Student was registered successfully!" });
         });
-      }
-      studentSignin(req, res);
-    });
+      });
+    }
+  });
 };
 
 /* Employer Auth */
