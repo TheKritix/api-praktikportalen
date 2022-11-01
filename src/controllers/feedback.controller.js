@@ -22,8 +22,6 @@ exports.postFeedback = (req, res) => {
 };
 
 
-
-
 exports.getFeedback = (req, res) => {
     Feedback.find()
         .then((feedback) => {
