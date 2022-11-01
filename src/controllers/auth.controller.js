@@ -17,7 +17,7 @@ exports.studentLogin = async (req, res) => {
     },
   });
   const output = xml2js.xml2js(data, { compact: false, spaces: 4 });
-  if (output) {
+  if (req.body.ticket) {
     const studentEmail =
       output.elements[0].elements[0].elements[1].elements[0].elements[1]
         .elements[0].text;
@@ -38,10 +38,9 @@ exports.studentLogin = async (req, res) => {
           res.status(500).send({ message: err });
           return;
         }
-        console.log(student.id);
 
         if (!student) {
-          const student = await Student.create({
+          await Student.create({
             studentID: studentID,
             name: studentName,
             email: studentEmail,
@@ -82,9 +81,13 @@ exports.studentLogin = async (req, res) => {
                 });
               });
             }
+            const newStudent = await student;
+            console.log(newStudent.id);
+            console.log("Student created: ", newStudent);
+            signIn(newStudent.studentID, res);
           });
           //const login = await studentLogin(req, res) ;
-          console.log(student.id);
+
           return;
         }
 
@@ -205,7 +208,7 @@ const studentSignup = (req, res) => {
   });
 };
 
-const signIn = (studentID) => {
+const signIn = (studentID, res) => {
   Student.findOne({
     studentID: studentID,
   })
@@ -215,7 +218,7 @@ const signIn = (studentID) => {
         res.status(500).send({ message: err });
         return;
       }
-      console.log(student);
+      console.log("signIn Function " + student);
       if (student == null) {
         return res.status(404).send({ message: "User Not found." });
       }
@@ -246,6 +249,8 @@ exports.employerSignup = (req, res) => {
   const employer = new Employer({
     username: req.body.username,
     email: req.body.email,
+    name: req.body.name,
+    companyName: req.body.companyName,
     password: bcrypt.hashSync(req.body.password, 8),
   });
 
@@ -340,6 +345,8 @@ exports.employerSignin = (req, res) => {
         id: employer._id,
         username: employer.username,
         email: employer.email,
+        name: employer.name,
+        companyName: employer.companyName,
         roles: authorities,
         accessToken: token,
         refreshToken: refreshToken,
