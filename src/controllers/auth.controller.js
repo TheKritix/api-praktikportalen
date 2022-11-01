@@ -4,9 +4,114 @@ const Employer = db.employer;
 const Student = db.student;
 const Role = db.role;
 const RefreshToken = db.refreshToken;
-
+const axios = require("axios");
+const xml2js = require("xml-js");
 var jwt = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
+
+exports.studentLogin = async (req, res) => {
+  const { data } = await axios.get("https://auth.dtu.dk/dtu/servicevalidate", {
+    params: {
+      service: "http://localhost:3001/dtu-praktikportalen",
+      ticket: req.body.ticket,
+    },
+  });
+  const output = xml2js.xml2js(data, { compact: false, spaces: 4 });
+  if (output) {
+    const studentEmail =
+      output.elements[0].elements[0].elements[1].elements[0].elements[1]
+        .elements[0].text;
+    const studentID =
+      output.elements[0].elements[0].elements[0].elements[0].text;
+    const studentName =
+      output.elements[0].elements[0].elements[1].elements[0].elements[4]
+        .elements[0].text;
+
+    Student.findOne({
+      where: {
+        studentID: studentID,
+      },
+    })
+      .populate("roles", "-__v")
+      .exec(async (err, student) => {
+        if (err) {
+          res.status(500).send({ message: err });
+          return;
+        }
+        console.log(student.id);
+
+        if (!student) {
+          const student = await Student.create({
+            studentID: studentID,
+            name: studentName,
+            email: studentEmail,
+          }).then(async (student) => {
+            if (req.body.roles) {
+              Role.find(
+                {
+                  name: { $in: req.body.roles },
+                },
+                (err, roles) => {
+                  if (err) {
+                    res.status(500).send({ message: err });
+                    return;
+                  }
+                  student.roles = roles.map((role) => role._id);
+                  student.save((err) => {
+                    if (err) {
+                      res.status(500).send({ message: err });
+                      return;
+                    }
+                    //res.send({ message: "Student was registered successfully!" });
+                  });
+                }
+              );
+            } else {
+              Role.findOne({ name: "user" }, (err, role) => {
+                if (err) {
+                  res.status(500).send({ message: err });
+                  return;
+                }
+                student.roles = [role._id];
+                student.save((err) => {
+                  if (err) {
+                    res.status(500).send({ message: err });
+                    return;
+                  }
+                  //res.send({ message: "Student was registered successfully!" });
+                });
+              });
+            }
+          });
+          //const login = await studentLogin(req, res) ;
+          console.log(student.id);
+          return;
+        }
+
+        var token = jwt.sign({ id: student.id }, config.secret, {
+          expiresIn: config.jwtExpiration,
+        });
+
+        let refreshToken = await RefreshToken.createToken(student);
+        var authorities = [];
+        for (let i = 0; i < student.roles.length; i++) {
+          authorities.push("ROLE_" + student.roles[i].name.toUpperCase());
+        }
+        console.log("Roless" + authorities);
+        console.log("token" + token);
+        console.log("refreshToken" + refreshToken);
+        res.status(200).send({
+          id: student._id,
+          studentID: student.studentID,
+          name: student.name,
+          email: student.email,
+          roles: authorities,
+          accessToken: token,
+          refreshToken: refreshToken,
+        });
+      });
+  }
+};
 
 exports.studentSignin = (req, res) => {
   Student.findOne({
@@ -20,9 +125,7 @@ exports.studentSignin = (req, res) => {
       }
       console.log(student);
       if (student == null) {
-        studentSignup(req, res);
-        this.studentSignin(req, res);
-        return;
+        return res.status(404).send({ message: "User Not found." });
       }
       var token = jwt.sign({ id: student.id }, config.secret, {
         expiresIn: config.jwtExpiration,
@@ -100,6 +203,42 @@ const studentSignup = (req, res) => {
       });
     }
   });
+};
+
+const signIn = (studentID) => {
+  Student.findOne({
+    studentID: studentID,
+  })
+    .populate("roles", "-__v")
+    .exec(async (err, student) => {
+      if (err) {
+        res.status(500).send({ message: err });
+        return;
+      }
+      console.log(student);
+      if (student == null) {
+        return res.status(404).send({ message: "User Not found." });
+      }
+      var token = jwt.sign({ id: student.id }, config.secret, {
+        expiresIn: config.jwtExpiration,
+      });
+
+      let refreshToken = await RefreshToken.createToken(student);
+      var authorities = [];
+      for (let i = 0; i < student.roles.length; i++) {
+        authorities.push("ROLE_" + student.roles[i].name.toUpperCase());
+      }
+      console.log("Roless" + authorities);
+      res.status(200).send({
+        id: student._id,
+        studentID: student.studentID,
+        name: student.name,
+        email: student.email,
+        roles: authorities,
+        accessToken: token,
+        refreshToken: refreshToken,
+      });
+    });
 };
 
 /* Employer Auth */
