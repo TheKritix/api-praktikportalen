@@ -1,13 +1,13 @@
 const mongoose = require("mongoose");
 
 const postsSchema = {
-    title: String,
+    position: String,
     type: String,
-    company: String,
+    description: String,
+    //company: String,
+    // country: String,
     // location: String,
-    // contact: String,
-    // email: String,
-    // phone: String,
+    // startdate: String
 };
 
 module.exports = Object.freeze({
