@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const postsSchema = {
     title: String,
     type: String,
-    companyName: String,
+    company: String,
     // location: String,
     // contact: String,
     // email: String,
