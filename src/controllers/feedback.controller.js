@@ -33,3 +33,15 @@ exports.getFeedback = (req, res) => {
             res.status(500).send({message: err.message});
         })
 };
+
+
+exports.deleteFeedback = (req, res) => {
+    Feedback.findOne({
+        _id: req.body._id
+    }).remove((err) => {
+        if (err){
+            res.status(500).send({message: err});
+        }
+        res.send({message: "Feedback was successfully deleted"})
+    })
+}
