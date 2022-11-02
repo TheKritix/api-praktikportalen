@@ -15,6 +15,10 @@ exports.getEmployers = (req, res) => {
     });
 };
 
+exports.getEmployerByToken = (req, res) => {
+
+};
+
 exports.userBoard = (req, res) => {
   res.status(200).send("Logged in as User");
 };
