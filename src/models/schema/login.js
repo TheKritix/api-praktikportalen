@@ -6,8 +6,10 @@ const roleSchema = {
 
 const employerSchema = {
   username: String,
+  name: String,
   email: String,
   password: String,
+  companyName: String,
   roles: [
     {
       type: mongoose.Schema.Types.ObjectId,
