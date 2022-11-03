@@ -17,6 +17,13 @@ router.get("/employers", controller.getEmployers);
 
 router.get("/test/user", [authJwt.verifyToken], controller.userBoard);
 
+router.put("/employers", [authJwt.verifyToken], controller.insertEmployeePosition)
+
+router.put ("/employersBackdropImg", [authJwt.verifyToken], controller.insertBackdropImage)
+router.put ("/employersProfileImg", [authJwt.verifyToken], controller.insertProfileImage)
+
+router.get ("/employer", controller.getEmployer)
+
 router.get(
   "/test/admin",
   [authJwt.verifyToken, authJwt.isAdmin],

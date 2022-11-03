@@ -341,6 +341,7 @@ exports.employerSignin = (req, res) => {
       for (let i = 0; i < employer.roles.length; i++) {
         authorities.push("ROLE_" + employer.roles[i].name.toUpperCase());
       }
+      console.log(employer)
       res.status(200).send({
         id: employer._id,
         username: employer.username,
@@ -350,6 +351,9 @@ exports.employerSignin = (req, res) => {
         roles: authorities,
         accessToken: token,
         refreshToken: refreshToken,
+        position: employer.position,
+        backdropImage: employer.backdropImage,
+        profileImage: employer.profileImage
       });
     });
 };
