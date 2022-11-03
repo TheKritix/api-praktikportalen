@@ -6,8 +6,10 @@ const roleSchema = {
 
 const employerSchema = {
   username: String,
+  name: String,
   email: String,
   password: String,
+  companyName: String,
   roles: [
     {
       type: mongoose.Schema.Types.ObjectId,
@@ -35,11 +37,17 @@ const employerSchema = {
 };
 
 const studentSchema = {
-  email: String,
-  password: String,
-  name: String,
-  // role: String,
   studentID: String,
+  name: String,
+  email: String,
+  roles: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Role",
+    },
+  ],
+  // role: String,
+
   // phone: String,
   // studentSemester: String,
   // studentClass: String,

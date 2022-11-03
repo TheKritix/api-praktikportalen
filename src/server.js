@@ -12,7 +12,7 @@ const helmet = require("helmet");
 const morgan = require("morgan");
 const modelContainer = require("./models");
 const Role = modelContainer.role;
-const Feedback = modelContainer.feedback
+const Feedback = modelContainer.feedback;
 const app = express();
 
 const __user = process.env.MONGO_INITDB_ROOT_USERNAME;
@@ -38,7 +38,7 @@ mongoose
   });
 
 var corsOptions = {
-  origin: "http://localhost:3000",
+  origin: "http://localhost:3001",
 };
 
 app.use(cors(corsOptions));
