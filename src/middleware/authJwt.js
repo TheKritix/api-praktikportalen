@@ -14,7 +14,10 @@ const catchError = (err, res) => {
 };
 
 const verifyToken = (req, res, next) => {
-  let token = req.headers["x-access-token"];
+  //let token = req.headers["x-access-token"];
+
+  const token = req.body.user.accessToken
+ 
 
   if (!token) {
     return res.status(403).send({ message: "No token provided!" });
@@ -22,6 +25,7 @@ const verifyToken = (req, res, next) => {
 
   jwt.verify(token, config.secret, (err, decoded) => {
     if (err) {
+      console.log("ERROR"+ err)
       return catchError(err, res);
     }
     req.userId = decoded.id;

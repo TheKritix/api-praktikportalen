@@ -15,8 +15,52 @@ exports.getEmployers = (req, res) => {
     });
 };
 
-exports.getEmployerByToken = (req, res) => {
+exports.getEmployer = (req, res) => {
+  console.log("here")
+  Employer.findOne(
+    { email: req.body.body.email },
+    function (err, doc) {
+      console.log(doc)
+      if (err) return res.send(500, { error: err });
+      return res.send("Employee Send");
+    }
+  )
+};
 
+exports.insertEmployeePosition = (req, res) => {
+  Employer.findOneAndUpdate(
+    { email: req.body.user.email },
+    { position: req.body.user.position},
+    { upsert: true },
+    function (err, doc) {
+      if (err) return res.send(500, { error: err });
+      return res.send("Position updated successfully");
+    }
+  );
+};
+
+exports.insertBackdropImage = (req, res) => {
+  Employer.findOneAndUpdate(
+    { email: req.body.user.email },
+    { backdropImage: req.body.user.backdropImage},
+    { upsert: true },
+    function (err, doc) {
+      if (err) return res.send(500, { error: err });
+      return res.send("Image updated successfully");
+    }
+  )
+};
+
+exports.insertProfileImage = (req, res) => {
+  Employer.findOneAndUpdate(
+    { email: req.body.user.email },
+    { profileImage: req.body.user.profileImage},
+    { upsert: true },
+    function (err, doc) {
+      if (err) return res.send(500, { error: err });
+      return res.send("Image updated successfully");
+    }
+  )
 };
 
 exports.userBoard = (req, res) => {
