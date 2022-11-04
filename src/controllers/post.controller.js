@@ -13,10 +13,10 @@ exports.getPosts = (req, res) => {
 
 exports.createPost = (req, res) => {
   const post = new Post({
-    title: req.body.title,
+    description: req.body.description,
     type: req.body.type,
     company: req.body.company,
-    // location: req.body.location,
+    location: req.body.location,
     // contact: req.body.contact,
     // email: req.body.email,
     // phone: req.body.phone,
