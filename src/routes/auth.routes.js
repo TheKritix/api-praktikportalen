@@ -17,12 +17,18 @@ router.post(
   controller.employerSignup
 );
 
+router.post(
+  "/auth/studentSignup",
+  [verifySignUp.checkDuplicateStudentID, verifySignUp.checkStudentRolesExisted],
+  controller.studentSignup
+);
+
 router.post("/auth/signin", controller.employerSignin);
 
 router.post("/auth/refreshtoken", controller.refreshToken);
 
 router.post("/auth/studentsignin", controller.studentSignin);
 
-router.post("/auth/studentlogin", controller.studentLogin);
+router.post("/auth/studentLogin", controller.studentSignin);
 
 module.exports = router;
