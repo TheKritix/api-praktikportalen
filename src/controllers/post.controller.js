@@ -15,11 +15,13 @@ exports.createPost = (req, res) => {
     const post = new Post({
         position: req.body.position,
         type: req.body.type,
+        company: req.body.company,
+        location: req.body.location,
+        startdate: req.body.startdate,
         description: req.body.description,
-        // company: req.body.company,
-        // country: req.body.country,
-        // location: req.body.location,
-        // startdate: req.body.startdate,
+        contact: req.body.contact,
+        applyToEmail: req.body.applyToEmail,
+        website: req.body.website,
     })
     post.save((err, post) => {
         if (err){
