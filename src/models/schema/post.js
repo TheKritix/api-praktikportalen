@@ -10,6 +10,7 @@ const postsSchema = {
     contact: String,
     applyToEmail: String,
     website: String,
+    //bannerImg: String,
     compensation: Boolean,
     hasApplied: Boolean,
     benefits: [String],

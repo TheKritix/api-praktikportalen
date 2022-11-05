@@ -22,6 +22,7 @@ exports.createPost = (req, res) => {
         contact: req.body.contact,
         applyToEmail: req.body.applyToEmail,
         website: req.body.website,
+        //bannerImg: req.body.bannerImg,
     })
     post.save((err, post) => {
         if (err){
