@@ -74,6 +74,8 @@ exports.studentSignin = async (req, res) => {
           refreshToken: refreshToken,
         });
       });
+  } else {
+    res.status(500).send({ message: "Invalid Ticket" });
   }
 };
 
@@ -190,7 +192,7 @@ exports.employerSignup = (req, res) => {
 };
 
 exports.employerSignin = (req, res) => {
-  console.log("das ist eine sehr nice employer")
+  console.log("das ist eine sehr nice employer");
   Employer.findOne({
     username: req.body.username,
   })
