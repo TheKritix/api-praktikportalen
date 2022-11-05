@@ -13,7 +13,7 @@ exports.getPosts = (req, res) => {
 
 exports.createPost = (req, res) => {
     const post = new Post({
-        position: req.body.position,
+        title: req.body.title,
         type: req.body.type,
         company: req.body.company,
         location: req.body.location,
@@ -22,6 +22,9 @@ exports.createPost = (req, res) => {
         contact: req.body.contact,
         applyToEmail: req.body.applyToEmail,
         website: req.body.website,
+        // compensation: req.body.compensation,
+        // hasApplied: req.body.hasApplied,
+        // benefits: req.body.benefits,
     })
     post.save((err, post) => {
         if (err){
