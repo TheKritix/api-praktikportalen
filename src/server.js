@@ -12,7 +12,6 @@ const helmet = require("helmet");
 const morgan = require("morgan");
 const modelContainer = require("./models");
 const Role = modelContainer.role;
-const Feedback = modelContainer.feedback;
 
 const app = express();
 
@@ -20,9 +19,12 @@ const __user = process.env.MONGO_INITDB_ROOT_USERNAME;
 const __password = process.env.MONGO_INITDB_ROOT_PASSWORD;
 const __host = process.env.MONGO_INITDB_HOST;
 console.log(__user, __password, __host);
+
+const mongoDBUri = `mongodb://${__user}:${__password}@${__host}/admin`;
+
 mongoose
   .connect(
-    `mongodb://${__user}:${__password}@${__host}/admin`,
+    mongoDBUri,
     //"mongodb://localhost:27017/admin",
     {
       useNewUrlParser: true,
@@ -46,14 +48,24 @@ app.use(cors(corsOptions));
 
 app.use(helmet());
 
-app.use(bodyParser.json());
+app.use(express.json({ limit: "50mb", extended: true }));
+app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
-app.use(express.json({ limit: "50mb" }));
-app.use(express.urlencoded({ limit: "50mb" }));
+app.use(
+  bodyParser.urlencoded({
+    limit: "50mb",
+    extended: true,
+  })
+);
+
+app.use(
+  bodyParser.json({
+    limit: "50mb",
+    extended: true,
+  })
+);
 
 app.use(morgan("combined"));
-
-app.use(express.urlencoded({ extended: true }));
 
 app.use(express.static("./public"));
 

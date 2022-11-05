@@ -32,6 +32,7 @@ const studentSchema = {
       ref: "Role",
     },
   ],
+  pdfFileID: String,
   // role: String,
 
   // phone: String,
