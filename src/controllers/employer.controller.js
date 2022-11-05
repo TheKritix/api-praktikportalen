@@ -51,6 +51,17 @@ exports.insertBackdropImage = (req, res) => {
   )
 };
 
+exports.getBackdropImage = (req, res) => {
+  console.log("here")
+  Employer.findOne(
+    {email: req.body.user.email},
+    function(err, obj) {
+      if (err) return res.send(500, { error: err });
+      return res.send(200, obj.backdropImage)
+    }
+  )
+};
+
 exports.insertProfileImage = (req, res) => {
   Employer.findOneAndUpdate(
     { email: req.body.user.email },
