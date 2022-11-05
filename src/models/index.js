@@ -6,4 +6,5 @@ module.exports = Object.freeze({
   ROLES: ["user", "admin"],
   feedback: require("./feedback.model.js"),
   post: require("./post.model.js"), 
+  gridFile: require("./gridFile.model.js"),
 });
