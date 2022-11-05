@@ -16,10 +16,12 @@ exports.createPost = (req, res) => {
         title: req.body.title,
         type: req.body.type,
         company: req.body.company,
-        // location: req.body.location,
-        // contact: req.body.contact,
-        // email: req.body.email,
-        // phone: req.body.phone,
+        location: req.body.location,
+        startdate: req.body.startdate,
+        description: req.body.description,
+        contact: req.body.contact,
+        applyToEmail: req.body.applyToEmail,
+        website: req.body.website,
     })
     post.save((err, post) => {
         if (err){
