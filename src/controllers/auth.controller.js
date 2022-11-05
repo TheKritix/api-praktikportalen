@@ -190,6 +190,7 @@ exports.employerSignup = (req, res) => {
 };
 
 exports.employerSignin = (req, res) => {
+  console.log("das ist eine sehr nice employer")
   Employer.findOne({
     username: req.body.username,
   })
@@ -238,8 +239,6 @@ exports.employerSignin = (req, res) => {
         accessToken: token,
         refreshToken: refreshToken,
         position: employer.position,
-        backdropImage: employer.backdropImage,
-        profileImage: employer.profileImage,
       });
     });
 };

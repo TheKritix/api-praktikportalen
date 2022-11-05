@@ -22,6 +22,9 @@ router.put("/employers", [authJwt.verifyToken], controller.insertEmployeePositio
 router.put ("/employersBackdropImg", [authJwt.verifyToken], controller.insertBackdropImage)
 router.put ("/employersProfileImg", [authJwt.verifyToken], controller.insertProfileImage)
 
+router.post ("/employersBackdropImg", [authJwt.verifyToken], controller.getBackdropImage)
+//router.put ("/employersProfileImg", [authJwt.verifyToken], controller.)
+
 router.get ("/employer", controller.getEmployer)
 
 router.get(
