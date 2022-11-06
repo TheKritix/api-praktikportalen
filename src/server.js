@@ -40,7 +40,7 @@ mongoose
   });
 
 var corsOptions = {
-  origin: "http://localhost:3001",
+  origin: "https://dtu.praktikportal.diplomportal.dk",
 };
 
 app.use(cors(corsOptions));
