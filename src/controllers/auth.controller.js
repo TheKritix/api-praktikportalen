@@ -21,6 +21,7 @@ exports.studentSignin = async (req, res) => {
   });
   const output = xml2js.xml2js(data, { compact: false, spaces: 4 });
   console.log("SignIn data length" + data.length);
+  console.log("SignIn data" + data);
   if (data.length > 700 && req.body.ticket) {
     const studentEmail =
       output.elements[0].elements[0].elements[1].elements[0].elements[1]
