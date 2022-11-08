@@ -13,6 +13,7 @@ router.use(function (req, res, next) {
 
 
 router.post("/feedback", controller.postFeedback);
-router.get("/feedback", controller.getFeedback)
+router.get("/feedback", controller.getFeedback);
+router.delete("/feedback/delete", controller.deleteFeedback);
 
 module.exports = router;
