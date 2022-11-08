@@ -13,29 +13,19 @@ global.stuName = "";
 global.stuEmail = "";
 
 exports.studentSignin = async (req, res) => {
-  const { data } = await axios.get("https://auth.dtu.dk/dtu/servicevalidate", {
+  const { data } = await axios.get("https://auth.dtu.dk/dtu/validate", {
     params: {
       service: "https://dtu.praktikportal.diplomportal.dk",
       ticket: req.body.ticket,
     },
   });
-  const output = xml2js.xml2js(data, { compact: false, spaces: 4 });
+  const studentID = data.split("\n")[1];
+  console.log(studentID);
   console.log("SignIn data length" + data.length);
-  console.log("SignIn data" + data);
-  if (data.length > 700 && req.body.ticket) {
-    const studentEmail =
-      output.elements[0].elements[0].elements[1].elements[0].elements[1]
-        .elements[0].text;
-    const studentID =
-      output.elements[0].elements[0].elements[0].elements[0].text;
-    const studentName =
-      output.elements[0].elements[0].elements[1].elements[0].elements[4]
-        .elements[0].text;
+  if (data.length === 11 && req.body.ticket) {
     stuID = studentID;
-    stuName = studentName;
-    stuEmail = studentEmail;
 
-    console.log(studentEmail);
+    console.log(studentID);
 
     Student.findOne({
       studentID: studentID,
