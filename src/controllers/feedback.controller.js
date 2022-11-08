@@ -4,7 +4,7 @@ const Feedback = db.feedback;
 
 exports.postFeedback = (req, res) => {
     const post = new Feedback({
-        username: req.body.firstName,
+        firstName: req.body.firstName,
         lastName: req.body.lastName,
         postedAt: req.body.postedAt,
         text: req.body.text,
