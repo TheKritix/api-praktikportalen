@@ -4,11 +4,12 @@ const Feedback = db.feedback;
 
 exports.postFeedback = (req, res) => {
     const post = new Feedback({
-        username: req.body.firstName,
+        firstName: req.body.firstName,
         lastName: req.body.lastName,
         postedAt: req.body.postedAt,
         text: req.body.text,
-        ratingOutOfFive: req.body.ratingOutOfFive
+        ratingOutOfFive: req.body.ratingOutOfFive,
+        internshipId: req.body.internshipId
     })
     post.save((err, post) => {
         if (err){
@@ -22,8 +23,6 @@ exports.postFeedback = (req, res) => {
 };
 
 
-
-
 exports.getFeedback = (req, res) => {
     Feedback.find()
         .then((feedback) => {
@@ -33,3 +32,15 @@ exports.getFeedback = (req, res) => {
             res.status(500).send({message: err.message});
         })
 };
+
+
+exports.deleteFeedback = (req, res) => {
+    Feedback.findOne({
+        _id: req.body._id
+    }).remove((err) => {
+        if (err){
+            res.status(500).send({message: err});
+        }
+        res.send({message: "Feedback was successfully deleted"})
+    })
+}
