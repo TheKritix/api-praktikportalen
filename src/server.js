@@ -20,7 +20,8 @@ const __password = process.env.MONGO_INITDB_ROOT_PASSWORD;
 const __host = process.env.MONGO_INITDB_HOST;
 console.log(__user, __password, __host);
 
-const mongoDBUri = `mongodb://${__user}:${__password}@${__host}/admin`;
+//const mongoDBUri = `mongodb://${__user}:${__password}@${__host}/admin`;
+const mongoDBUri = `mongodb://${__user}:${__password}@${__host}.dtu.praktikportal.diplomportal.dk:6543/admin`
 
 mongoose
   .connect(
