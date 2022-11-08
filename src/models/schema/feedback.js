@@ -5,7 +5,8 @@ const feedbackSchema = mongoose.Schema({
     lastName: String,
     postedAt: String,
     text: String,
-    ratingOutOfFive: String
+    ratingOutOfFive: String,
+    internshipId: String
 })
 
 module.exports = Object.freeze({

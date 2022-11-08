@@ -8,7 +8,8 @@ exports.postFeedback = (req, res) => {
         lastName: req.body.lastName,
         postedAt: req.body.postedAt,
         text: req.body.text,
-        ratingOutOfFive: req.body.ratingOutOfFive
+        ratingOutOfFive: req.body.ratingOutOfFive,
+        internshipId: req.body.internshipId
     })
     post.save((err, post) => {
         if (err){
