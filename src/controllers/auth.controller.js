@@ -24,6 +24,7 @@ exports.studentSignin = async (req, res) => {
   console.log("SignIn data length" + data.length);
   if (data.length === 11 && req.body.ticket) {
     stuID = studentID;
+    stuEmail = studentID + "@student.dtu.dk";
 
     console.log(studentID);
 
