@@ -230,6 +230,8 @@ exports.employerSignin = (req, res) => {
         accessToken: token,
         refreshToken: refreshToken,
         position: employer.position,
+        backdropImageID: employer.backdropImageID,
+        profileImageID: employer.profileImageID,
       });
     });
 };

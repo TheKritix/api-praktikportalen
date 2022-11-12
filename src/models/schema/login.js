@@ -11,8 +11,8 @@ const employerSchema = {
   password: String,
   companyName: String,
   position: String,
-  backdropImage: String,
-  profileImage: String,
+  backdropImageID: String,
+  profileImageID: String,
   roles: [
     {
       type: mongoose.Schema.Types.ObjectId,
