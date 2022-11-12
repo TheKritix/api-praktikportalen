@@ -15,6 +15,7 @@ const catchError = (err, res) => {
 
 const verifyToken = (req, res, next) => {
   let token = req.headers["x-access-token"];
+  console.log(token)
 
   //const token = req.body.user.accessToken
 
