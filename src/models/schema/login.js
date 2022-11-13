@@ -33,6 +33,8 @@ const studentSchema = {
     },
   ],
   pdfFileID: String,
+  backdropImageID: String,
+  profileImageID: String,
   // role: String,
 
   // phone: String,

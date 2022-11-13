@@ -2,7 +2,6 @@ const db = require("../models");
 const Employer = db.employer;
 const fs = require("fs");
 const GridFile = db.gridFile;
-const async = require("async");
 const path = require("path");
 
 exports.allAccess = (req, res) => {
