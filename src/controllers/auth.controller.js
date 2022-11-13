@@ -63,6 +63,8 @@ exports.studentSignin = async (req, res) => {
           roles: authorities,
           accessToken: token,
           refreshToken: refreshToken,
+          backdropImageID: student.backdropImageID,
+          profileImageID: student.profileImageID,
         });
       });
   }
@@ -108,6 +110,7 @@ const signIn = (studentID, res) => {
       for (let i = 0; i < student.roles.length; i++) {
         authorities.push("ROLE_" + student.roles[i].name.toUpperCase());
       }
+
       console.log("Roless" + authorities);
       res.status(200).send({
         id: student._id,
@@ -117,6 +120,8 @@ const signIn = (studentID, res) => {
         roles: authorities,
         accessToken: token,
         refreshToken: refreshToken,
+        backdropImageID: student.backdropImageID,
+        profileImageID: student.profileImageID,
       });
     });
 };
