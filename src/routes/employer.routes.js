@@ -29,7 +29,7 @@ router.put ("/employersProfileImg", [authJwt.verifyToken], upload.any(), control
 router.get ("/employersBackdropImg/:backdropImageID", [authJwt.verifyToken], controller.getBackdropImage)
 router.get ("/employersProfileImg/:profileImageID", [authJwt.verifyToken], controller.getProfileImage)
 
-router.get ("/employer", controller.getEmployer)
+router.get ("/employer/:email", [authJwt.verifyToken], controller.getEmployer)
 
 router.get(
   "/test/admin",

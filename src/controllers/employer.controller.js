@@ -20,11 +20,32 @@ exports.getEmployers = (req, res) => {
 };
 
 exports.getEmployer = (req, res) => {
-  console.log("here");
-  Employer.findOne({ email: req.body.body.email }, function (err, doc) {
+  Employer.findOne({ email: req.params.email }, function (err, doc) {
+    if (err) {
+      return res.status(500).send({ message: err });
+    }
     console.log(doc);
-    if (err) return res.send(500, { error: err });
-    return res.send("Employee Send");
+
+    const token = req.headers["x-access-token"];
+    const refreshToken = req.headers["x-refresh-token"];
+
+    const employer = {
+      id: doc._id,
+      username: doc.username,
+      email: doc.email,
+      name: doc.name,
+      companyName: doc.companyName,
+      roles: doc.roles,
+      accessToken: token,
+      refreshToken: refreshToken,
+      position: doc.position,
+      backdropImageID: doc.backdropImageID,
+      profileImageID: doc.profileImageID,
+    };
+
+    console.log(employer);
+
+    res.send(employer);
   });
 };
 
@@ -88,23 +109,24 @@ exports.getBackdropImage = async (req, res) => {
       const filePath = path.join(__dirname, fileName);
 
       if (gridFile) {
-        const fileStream =  fs.createWriteStream(filePath);
+        const fileStream = fs.createWriteStream(filePath);
 
-        res.set('Content-Type', "image/jpeg");
-        res.set('Content-Disposition', 'attachment; filename="' + fileName + '"');
+        res.set("Content-Type", "image/jpeg");
+        res.set(
+          "Content-Disposition",
+          'attachment; filename="' + fileName + '"'
+        );
 
         await gridFile.download(fileStream, (err) => {
           res.sendFile(filePath, function (err) {
             if (err) {
-              console.log
+              console.log;
             }
             fs.unlink(filePath, (err) => {
-             console.log("File deleted")})
+              console.log("File deleted");
+            });
           });
-         
-        })
-
-
+        });
       } else {
         // file not found
         res.status(404).json({ error: "file not found" });
@@ -128,7 +150,7 @@ exports.insertProfileImage = async (req, res) => {
         // delete the file from local folder
         fs.unlinkSync(file.path);
 
-        console.log(req.files)
+        console.log(req.files);
 
         const email = req.files[0].fieldname;
         Employer.findOneAndUpdate(
@@ -153,7 +175,7 @@ exports.insertProfileImage = async (req, res) => {
 
 exports.getProfileImage = async (req, res) => {
   try {
-    console.log(req.params)
+    console.log(req.params);
     if (req.params) {
       const id = req.params.profileImageID;
       console.log(req.params);
@@ -166,23 +188,24 @@ exports.getProfileImage = async (req, res) => {
       const filePath = path.join(__dirname, fileName);
 
       if (gridFile) {
-        const fileStream =  fs.createWriteStream(filePath);
+        const fileStream = fs.createWriteStream(filePath);
 
-        res.set('Content-Type', "image/jpeg");
-        res.set('Content-Disposition', 'attachment; filename="' + fileName + '"');
+        res.set("Content-Type", "image/jpeg");
+        res.set(
+          "Content-Disposition",
+          'attachment; filename="' + fileName + '"'
+        );
 
         await gridFile.download(fileStream, (err) => {
           res.sendFile(filePath, function (err) {
             if (err) {
-              console.log
+              console.log;
             }
             fs.unlink(filePath, (err) => {
-             console.log("File deleted")})
+              console.log("File deleted");
+            });
           });
-         
-        })
-
-
+        });
       } else {
         // file not found
         res.status(404).json({ error: "file not found" });
