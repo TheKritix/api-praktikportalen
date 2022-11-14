@@ -65,6 +65,7 @@ exports.studentSignin = async (req, res) => {
           refreshToken: refreshToken,
           backdropImageID: student.backdropImageID,
           profileImageID: student.profileImageID,
+          description: student.description,
         });
       });
   }
@@ -122,6 +123,7 @@ const signIn = (studentID, res) => {
         refreshToken: refreshToken,
         backdropImageID: student.backdropImageID,
         profileImageID: student.profileImageID,
+        description: student.description,
       });
     });
 };
@@ -237,6 +239,7 @@ exports.employerSignin = (req, res) => {
         position: employer.position,
         backdropImageID: employer.backdropImageID,
         profileImageID: employer.profileImageID,
+        description: employer.description,
       });
     });
 };

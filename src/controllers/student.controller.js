@@ -5,7 +5,6 @@ const GridFile = db.gridFile;
 const async = require("async");
 const path = require("path");
 
-
 exports.getStudents = (req, res) => {
   Student.find()
     .then((students) => {
@@ -16,13 +15,41 @@ exports.getStudents = (req, res) => {
     });
 };
 
+exports.setStudentName = (req, res) => {
+  Student.findOneAndUpdate(
+    { studentID: req.body.studentID },
+    { name: req.body.name },
+    { upsert: true },
+    function (err) {
+      if (err) {
+        return res.status(500).send({ message: err });
+      } else {
+        return res.status(200).send({ message: "Student name updated" });
+      }
+    }
+  );
+};
+
+exports.setStudentDescription = (req, res) => {
+  Student.findOneAndUpdate(
+    { studentID: req.body.studentID },
+    { description: req.body.description },
+    { upsert: true },
+    function (err) {
+      if (err) {
+        return res.status(500).send({ message: err });
+      } else {
+        return res.status(200).send({ message: "Student name updated" });
+      }
+    }
+  );
+};
+
 exports.getStudent = (req, res) => {
   Student.findOne({ studentID: req.params.studentID }, function (err, doc) {
     if (err) {
       return res.status(500).send({ message: err });
     }
-    console.log(doc);
-
     const token = req.headers["x-access-token"];
     const refreshToken = req.headers["x-refresh-token"];
 
@@ -36,9 +63,9 @@ exports.getStudent = (req, res) => {
       refreshToken: refreshToken,
       backdropImageID: doc.backdropImageID,
       profileImageID: doc.profileImageID,
+      description: doc.description
     };
 
-    console.log(student);
 
     res.send(student);
   });
@@ -115,7 +142,6 @@ exports.getPDFDownload = async (req, res) => {
   try {
     if (req.params) {
       const id = req.params.downloadID;
-      console.log(req.params);
 
       const gridFile = await GridFile.findById(id);
 
@@ -170,11 +196,9 @@ exports.getBackdropImage = async (req, res) => {
   try {
     if (req.params) {
       const id = req.params.backdropImageID;
-      console.log(req.params);
 
       const gridFile = await GridFile.findById(id);
 
-      console.log(gridFile);
 
       const fileName = gridFile._id + gridFile.filename;
       const filePath = path.join(__dirname, fileName);
@@ -190,9 +214,6 @@ exports.getBackdropImage = async (req, res) => {
 
         await gridFile.download(fileStream, (err) => {
           res.sendFile(filePath, function (err) {
-            if (err) {
-              console.log;
-            }
             fs.unlink(filePath, (err) => {
               console.log("File deleted");
             });
@@ -221,8 +242,6 @@ exports.insertProfileImage = async (req, res) => {
         // delete the file from local folder
         fs.unlinkSync(file.path);
 
-        console.log(req.files);
-
         const studentID = req.files[0].fieldname;
         Student.findOneAndUpdate(
           { studentID: studentID },
@@ -246,14 +265,10 @@ exports.insertProfileImage = async (req, res) => {
 
 exports.getProfileImage = async (req, res) => {
   try {
-    console.log(req.params);
     if (req.params) {
       const id = req.params.profileImageID;
-      console.log(req.params);
-
       const gridFile = await GridFile.findById(id);
 
-      console.log(gridFile);
 
       const fileName = gridFile._id + gridFile.filename;
       const filePath = path.join(__dirname, fileName);
@@ -269,9 +284,6 @@ exports.getProfileImage = async (req, res) => {
 
         await gridFile.download(fileStream, (err) => {
           res.sendFile(filePath, function (err) {
-            if (err) {
-              console.log;
-            }
             fs.unlink(filePath, (err) => {
               console.log("File deleted");
             });

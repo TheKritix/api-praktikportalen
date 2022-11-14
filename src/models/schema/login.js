@@ -13,6 +13,7 @@ const employerSchema = {
   position: String,
   backdropImageID: String,
   profileImageID: String,
+  description: String,
   roles: [
     {
       type: mongoose.Schema.Types.ObjectId,
@@ -35,6 +36,7 @@ const studentSchema = {
   pdfFileID: String,
   backdropImageID: String,
   profileImageID: String,
+  description: String,
   // role: String,
 
   // phone: String,

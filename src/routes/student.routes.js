@@ -31,4 +31,7 @@ const upload = multer({ dest: path.join(__dirname, '.') })
 
   router.get ("/student/:studentID", [authJwt.verifyToken], controller.getStudent)
 
+  router.put("/studentName", [authJwt.verifyToken], controller.setStudentName)
+  router.put("/studentDescription", [authJwt.verifyToken], controller.setStudentDescription)
+
   module.exports = router;

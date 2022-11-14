@@ -18,12 +18,26 @@ exports.getEmployers = (req, res) => {
     });
 };
 
+exports.setEmployerDescription = (req, res) => {
+  Employer.findOneAndUpdate(
+    { email: req.body.email },
+    { description: req.body.description },
+    { upsert: true },
+    function (err) {
+      if (err) {
+        return res.status(500).send({ message: err });
+      } else {
+        return res.status(200).send({ message: "Student name updated" });
+      }
+    }
+  );
+};
+
 exports.getEmployer = (req, res) => {
   Employer.findOne({ email: req.params.email }, function (err, doc) {
     if (err) {
       return res.status(500).send({ message: err });
     }
-    console.log(doc);
 
     const token = req.headers["x-access-token"];
     const refreshToken = req.headers["x-refresh-token"];
@@ -40,9 +54,8 @@ exports.getEmployer = (req, res) => {
       position: doc.position,
       backdropImageID: doc.backdropImageID,
       profileImageID: doc.profileImageID,
+      description: doc.description
     };
-
-    console.log(employer);
 
     res.send(employer);
   });
@@ -50,8 +63,8 @@ exports.getEmployer = (req, res) => {
 
 exports.insertEmployeePosition = (req, res) => {
   Employer.findOneAndUpdate(
-    { email: req.body.user.email },
-    { position: req.body.user.position },
+    { email: req.body.email },
+    { position: req.body.position },
     { upsert: true },
     function (err, doc) {
       if (err) return res.send(500, { error: err });
@@ -98,11 +111,8 @@ exports.getBackdropImage = async (req, res) => {
   try {
     if (req.params) {
       const id = req.params.backdropImageID;
-      console.log(req.params);
 
       const gridFile = await GridFile.findById(id);
-
-      console.log(gridFile);
 
       const fileName = gridFile._id + gridFile.filename;
       const filePath = path.join(__dirname, fileName);
@@ -119,7 +129,6 @@ exports.getBackdropImage = async (req, res) => {
         await gridFile.download(fileStream, (err) => {
           res.sendFile(filePath, function (err) {
             if (err) {
-              console.log;
             }
             fs.unlink(filePath, (err) => {
               console.log("File deleted");
@@ -149,8 +158,6 @@ exports.insertProfileImage = async (req, res) => {
         // delete the file from local folder
         fs.unlinkSync(file.path);
 
-        console.log(req.files);
-
         const email = req.files[0].fieldname;
         Employer.findOneAndUpdate(
           { email: email },
@@ -174,14 +181,10 @@ exports.insertProfileImage = async (req, res) => {
 
 exports.getProfileImage = async (req, res) => {
   try {
-    console.log(req.params);
     if (req.params) {
       const id = req.params.profileImageID;
-      console.log(req.params);
 
       const gridFile = await GridFile.findById(id);
-
-      console.log(gridFile);
 
       const fileName = gridFile._id + gridFile.filename;
       const filePath = path.join(__dirname, fileName);
