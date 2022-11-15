@@ -8,6 +8,7 @@ const axios = require("axios");
 const xml2js = require("xml-js");
 var jwt = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
+require("dotenv").config();
 global.stuID = "";
 global.stuName = "";
 global.stuEmail = "";
@@ -15,7 +16,7 @@ global.stuEmail = "";
 exports.studentSignin = async (req, res) => {
   const { data } = await axios.get("https://auth.dtu.dk/dtu/servicevalidate", {
     params: {
-      service: "https://dtu.praktikportal.diplomportal.dk",
+      service: process.env.SERVICE,
       ticket: req.body.ticket,
     },
   });
@@ -34,7 +35,6 @@ exports.studentSignin = async (req, res) => {
     stuID = studentID;
     stuName = studentName;
     stuEmail = studentEmail;
-
     console.log(studentEmail);
 
     Student.findOne({

@@ -61,14 +61,16 @@ exports.getPDFFileName = (req, res) => {
               .exec(done);
           },
           function getPDFName(student, done) {
-            GridFile.findById(student.pdfFileID).lean().exec(done);
+            if (student) {
+              GridFile.findById(student.pdfFileID).lean().exec(done);
+            }
           },
         ],
         function (err, casts) {
           if (err) {
             console.log(err);
           }
-          res.json(casts)
+          res.json(casts);
         }
       );
     }
@@ -78,21 +80,21 @@ exports.getPDFFileName = (req, res) => {
 };
 
 // Source: https://abskmj.github.io/notes/posts/express/express-multer-mongoose-gridfile/
-// Det her skal kodes lidt om, så vi ikke skal afvente på et ID.. 
+// Det her skal kodes lidt om, så vi ikke skal afvente på et ID..
 exports.getPDFDownload = async (req, res) => {
   try {
     if (req.params) {
-      const id = req.params.downloadID
-      console.log(req.params)
+      const id = req.params.downloadID;
+      console.log(req.params);
 
-      const gridFile = await GridFile.findById(id)
-  
+      const gridFile = await GridFile.findById(id);
+
       if (gridFile) {
-        res.attachment(id+".pdf")
-        gridFile.downloadStream(res)
+        res.attachment(id + ".pdf");
+        gridFile.downloadStream(res);
       } else {
         // file not found
-        res.status(404).json({ error: 'file not found' })
+        res.status(404).json({ error: "file not found" });
       }
     }
   } catch (err) {
