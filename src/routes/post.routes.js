@@ -18,7 +18,7 @@ router.use(function (req, res, next) {
 router.get("/post", controller.getPosts)
 router.post("/post", controller.createPost)
 
-router.put ("/bannerImage", upload.any(), controller.insertBannerImage)
-router.get ("/bannerImage/:bannerImageID", controller.getBackdropImage)
+//router.put("/bannerImage", upload.any(), controller.insertBannerImage)
+//router.get("/bannerImage/:bannerImageID", controller.getBannerImage)
 
 module.exports = router; 

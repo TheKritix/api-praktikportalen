@@ -52,9 +52,9 @@ exports.createPost = (req, res) => {
                     fs.unlinkSync(file.path);
 
                     //fix så den finder rigtige id
-                    const postID = req.files[0].fieldname;
+                    const title = req.files[0].fieldname;
                     Post.findOneAndUpdate(
-                       { postID: postID },
+                       { title: title },
                        { bannerImageID: gridFile._id },
                        { upsert: true },
                        function (err, doc) {
@@ -81,7 +81,7 @@ exports.createPost = (req, res) => {
                 const gridFile = await GridFile.findById(id);
 
                 const fileName = gridFile._id + gridFile.filename;
-                const filePath = path.join(_dirname, fileName);
+                const filePath = path.join(__dirname, fileName);
 
                 if (gridFile) {
                     const fileStream = fs.createWriteStream(filePath);
