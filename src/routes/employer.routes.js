@@ -32,6 +32,8 @@ router.get ("/employersProfileImg/:profileImageID", [authJwt.verifyToken], contr
 router.get ("/employer/:email", [authJwt.verifyToken], controller.getEmployer)
 
 router.put("/employerDescription", [authJwt.verifyToken], controller.setEmployerDescription)
+router.put("/employerUpdateEmail", [authJwt.verifyToken], controller.updateEmail)
+router.put("/employerUpdatePassword", [authJwt.verifyToken], controller.updatePassword)
 
 router.get(
   "/test/admin",
