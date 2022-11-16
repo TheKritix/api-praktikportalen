@@ -22,6 +22,7 @@ const verifyToken = (req, res, next) => {
 
   jwt.verify(token, config.secret, (err, decoded) => {
     if (err) {
+      console.log("ERROR" + err);
       return catchError(err, res);
     }
     req.userId = decoded.id;

@@ -4,13 +4,93 @@ const Employer = db.employer;
 const Student = db.student;
 const Role = db.role;
 const RefreshToken = db.refreshToken;
-
+const axios = require("axios");
+const xml2js = require("xml-js");
 var jwt = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
+global.stuID = "";
+global.stuName = "";
+global.stuEmail = "";
 
-exports.studentSignin = (req, res) => {
+exports.studentSignin = async (req, res) => {
+  const { data } = await axios.get("https://auth.dtu.dk/dtu/validate", {
+    params: {
+      service: "http://localhost:3001/dtu-praktikportalen",
+      ticket: req.body.ticket,
+    },
+  });
+  const studentID = data.split("\n")[1];
+  console.log(studentID);
+  console.log("SignIn data length" + data.length);
+  if (data.length === 11 && req.body.ticket) {
+    stuID = studentID;
+
+    console.log(studentID);
+
+    Student.findOne({
+      studentID: studentID,
+    })
+      .populate("roles", "-__v")
+      .exec(async (err, student) => {
+        if (err) {
+          res.status(500).send({ message: err });
+          return;
+        }
+
+        if (!student) {
+          this.studentSignup(stuID, stuName, stuEmail).then(() => {
+            signIn(stuID, res);
+          });
+          return;
+        }
+        var token = jwt.sign({ id: student.id }, config.secret, {
+          expiresIn: config.jwtExpiration,
+        });
+
+        let refreshToken = await RefreshToken.createToken(student);
+
+        var authorities = [];
+
+        for (let i = 0; i < student.roles.length; i++) {
+          authorities.push("ROLE_" + student.roles[i].name.toUpperCase());
+        }
+        console.log(student);
+        res.status(200).send({
+          id: student._id,
+          studentID: student.studentID,
+          name: student.name,
+          email: student.email,
+          roles: authorities,
+          accessToken: token,
+          refreshToken: refreshToken,
+          backdropImageID: student.backdropImageID,
+          profileImageID: student.profileImageID,
+          description: student.description,
+        });
+      });
+  }
+};
+
+exports.studentSignup = async (studentID, studentName, studentEmail) => {
+  console.log(studentEmail);
+
+  const student = new Student({
+    studentID: studentID,
+    name: studentName,
+    email: studentEmail,
+  });
+
+  student.save((err, student) => {
+    if (err) {
+      res.status(500).send({ message: err });
+      return;
+    }
+  });
+};
+
+const signIn = (studentID, res) => {
   Student.findOne({
-    studentID: req.body.studentID,
+    studentID: studentID,
   })
     .populate("roles", "-__v")
     .exec(async (err, student) => {
@@ -18,11 +98,9 @@ exports.studentSignin = (req, res) => {
         res.status(500).send({ message: err });
         return;
       }
-      console.log(student);
+      console.log("signIn Function " + student);
       if (student == null) {
-        studentSignup(req, res);
-        this.studentSignin(req, res);
-        return;
+        return res.status(404).send({ message: "User Not found." });
       }
       var token = jwt.sign({ id: student.id }, config.secret, {
         expiresIn: config.jwtExpiration,
@@ -33,6 +111,7 @@ exports.studentSignin = (req, res) => {
       for (let i = 0; i < student.roles.length; i++) {
         authorities.push("ROLE_" + student.roles[i].name.toUpperCase());
       }
+
       console.log("Roless" + authorities);
       res.status(200).send({
         id: student._id,
@@ -42,64 +121,11 @@ exports.studentSignin = (req, res) => {
         roles: authorities,
         accessToken: token,
         refreshToken: refreshToken,
+        backdropImageID: student.backdropImageID,
+        profileImageID: student.profileImageID,
+        description: student.description,
       });
     });
-};
-
-const studentSignup = (req, res) => {
-  const student = new Student({
-    studentID: req.body.studentID,
-    name: req.body.name,
-    email: req.body.email,
-  });
-
-  student.save((err, student) => {
-    if (err) {
-      res.status(500).send({ message: err });
-      return;
-    }
-
-    if (req.body.roles) {
-      Role.find(
-        {
-          name: { $in: req.body.roles },
-        },
-        (err, roles) => {
-          if (err) {
-            res.status(500).send({ message: err });
-            return;
-          }
-
-          student.roles = roles.map((role) => role._id);
-          student.save((err) => {
-            if (err) {
-              res.status(500).send({ message: err });
-              return;
-            }
-
-            //res.send({ message: "Student was registered successfully!" });
-          });
-        }
-      );
-    } else {
-      Role.findOne({ name: "user" }, (err, role) => {
-        if (err) {
-          res.status(500).send({ message: err });
-          return;
-        }
-
-        student.roles = [role._id];
-        student.save((err) => {
-          if (err) {
-            res.status(500).send({ message: err });
-            return;
-          }
-
-          //res.send({ message: "Student was registered successfully!" });
-        });
-      });
-    }
-  });
 };
 
 /* Employer Auth */
@@ -107,6 +133,8 @@ exports.employerSignup = (req, res) => {
   const employer = new Employer({
     username: req.body.username,
     email: req.body.email,
+    name: req.body.name,
+    companyName: req.body.companyName,
     password: bcrypt.hashSync(req.body.password, 8),
   });
 
@@ -160,6 +188,7 @@ exports.employerSignup = (req, res) => {
 };
 
 exports.employerSignin = (req, res) => {
+  console.log("das ist eine sehr nice employer");
   Employer.findOne({
     username: req.body.username,
   })
@@ -197,13 +226,20 @@ exports.employerSignin = (req, res) => {
       for (let i = 0; i < employer.roles.length; i++) {
         authorities.push("ROLE_" + employer.roles[i].name.toUpperCase());
       }
+      console.log(employer);
       res.status(200).send({
         id: employer._id,
         username: employer.username,
         email: employer.email,
+        name: employer.name,
+        companyName: employer.companyName,
         roles: authorities,
         accessToken: token,
         refreshToken: refreshToken,
+        position: employer.position,
+        backdropImageID: employer.backdropImageID,
+        profileImageID: employer.profileImageID,
+        description: employer.description,
       });
     });
 };

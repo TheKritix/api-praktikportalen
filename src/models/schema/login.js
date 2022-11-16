@@ -6,32 +6,21 @@ const roleSchema = {
 
 const employerSchema = {
   username: String,
+  name: String,
   email: String,
   password: String,
+  companyName: String,
+  position: String,
+  backdropImageID: String,
+  profileImageID: String,
+  description: String,
   roles: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Role",
     },
   ],
-  // role: String,
-  // name: String,
-  // phone: String,
-  // company: String,
-  // companyPhone: String,
-  // companyEmail: String,
-  // companyAddress: String,
-  // companyZip: String,
-  // companyCity: String,
-  // companyCVR: String,
-  // companyWebsite: String,
-  // companyDescription: String,
-  // companyLogo: String,
-  // companyContactPerson: String,
-  // companyContactPersonPhone: String,
-  // companyContactPersonEmail: String,
-  // companyContactPersonPosition: String,
-  // companyContactPersonDescription: String,
+
 };
 
 const studentSchema = {
@@ -44,6 +33,10 @@ const studentSchema = {
       ref: "Role",
     },
   ],
+  pdfFileID: String,
+  backdropImageID: String,
+  profileImageID: String,
+  description: String,
   // role: String,
 
   // phone: String,

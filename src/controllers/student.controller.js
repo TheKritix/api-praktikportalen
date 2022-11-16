@@ -1,26 +1,38 @@
 const db = require("../models");
-const Employer = db.employer;
+const Student = db.student;
 const fs = require("fs");
 const GridFile = db.gridFile;
+const async = require("async");
 const path = require("path");
 
-exports.allAccess = (req, res) => {
-  res.status(200).send("All Access");
-};
-
-exports.getEmployers = (req, res) => {
-  Employer.find()
-    .then((employers) => {
-      res.status(200).send(employers);
+exports.getStudents = (req, res) => {
+  Student.find()
+    .then((students) => {
+      res.status(200).send(students);
     })
     .catch((err) => {
       res.status(500).send({ message: err.message });
     });
 };
 
-exports.setEmployerDescription = (req, res) => {
-  Employer.findOneAndUpdate(
-    { email: req.body.email },
+exports.setStudentName = (req, res) => {
+  Student.findOneAndUpdate(
+    { studentID: req.body.studentID },
+    { name: req.body.name },
+    { upsert: true },
+    function (err) {
+      if (err) {
+        return res.status(500).send({ message: err });
+      } else {
+        return res.status(200).send({ message: "Student name updated" });
+      }
+    }
+  );
+};
+
+exports.setStudentDescription = (req, res) => {
+  Student.findOneAndUpdate(
+    { studentID: req.body.studentID },
     { description: req.body.description },
     { upsert: true },
     function (err) {
@@ -33,44 +45,117 @@ exports.setEmployerDescription = (req, res) => {
   );
 };
 
-exports.getEmployer = (req, res) => {
-  Employer.findOne({ email: req.params.email }, function (err, doc) {
+exports.getStudent = (req, res) => {
+  Student.findOne({ studentID: req.params.studentID }, function (err, doc) {
     if (err) {
       return res.status(500).send({ message: err });
     }
-
     const token = req.headers["x-access-token"];
     const refreshToken = req.headers["x-refresh-token"];
 
-    const employer = {
+    const student = {
       id: doc._id,
-      username: doc.username,
-      email: doc.email,
+      studentID: doc.studentID,
       name: doc.name,
-      companyName: doc.companyName,
+      email: doc.email,
       roles: doc.roles,
       accessToken: token,
       refreshToken: refreshToken,
-      position: doc.position,
       backdropImageID: doc.backdropImageID,
       profileImageID: doc.profileImageID,
       description: doc.description
     };
 
-    res.send(employer);
+
+    res.send(student);
   });
 };
 
-exports.insertEmployeePosition = (req, res) => {
-  Employer.findOneAndUpdate(
-    { email: req.body.email },
-    { position: req.body.position },
-    { upsert: true },
-    function (err, doc) {
-      if (err) return res.send(500, { error: err });
-      return res.send("Position updated successfully");
+//Source: https://abskmj.github.io/notes/posts/express/express-multer-mongoose-gridfile/
+exports.importPDF = async (req, res) => {
+  try {
+    if (req.files) {
+      const promises = req.files.map(async (file) => {
+        const fileStream = fs.createReadStream(file.path);
+
+        // upload file to gridfs
+        const gridFile = new GridFile({ filename: file.originalname });
+        await gridFile.upload(fileStream);
+
+        // delete the file from local folder
+        fs.unlinkSync(file.path);
+
+        const studentID = req.files[0].fieldname;
+        Student.findOneAndUpdate(
+          { studentID: studentID },
+          { pdfFileID: gridFile._id },
+          { upsert: true },
+          function (err, doc) {
+            if (err) {
+              console.log(err);
+            }
+          }
+        );
+      });
+
+      await Promise.all(promises);
     }
-  );
+    res.sendStatus(201);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+//Source: http://caolan.github.io/async/v3/
+exports.getPDFFileName = (req, res) => {
+  try {
+    if (req.params) {
+      async.waterfall(
+        [
+          function getPdfId(done) {
+            Student.findOne({ studentID: req.params.studentID })
+              .lean()
+              .exec(done);
+          },
+          function getPDFName(student, done) {
+            if (student) {
+              GridFile.findById(student.pdfFileID).lean().exec(done);
+            }
+          },
+        ],
+        function (err, casts) {
+          if (err) {
+            console.log(err);
+          }
+          res.json(casts);
+        }
+      );
+    }
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+// Source: https://abskmj.github.io/notes/posts/express/express-multer-mongoose-gridfile/
+// Det her skal kodes lidt om, så vi ikke skal afvente på et ID..
+exports.getPDFDownload = async (req, res) => {
+  try {
+    if (req.params) {
+      const id = req.params.downloadID;
+
+      const gridFile = await GridFile.findById(id);
+
+      if (gridFile) {
+        res.attachment(id + ".pdf");
+        gridFile.downloadStream(res);
+      } else {
+        // file not found
+        res.status(404).json({ error: "file not found" });
+      }
+    }
+  } catch (err) {
+    console.log(err);
+  }
 };
 
 exports.insertBackdropImage = async (req, res) => {
@@ -86,9 +171,9 @@ exports.insertBackdropImage = async (req, res) => {
         // delete the file from local folder
         fs.unlinkSync(file.path);
 
-        const email = req.files[0].fieldname;
-        Employer.findOneAndUpdate(
-          { email: email },
+        const studentID = req.files[0].fieldname;
+        Student.findOneAndUpdate(
+          { studentID: studentID },
           { backdropImageID: gridFile._id },
           { upsert: true },
           function (err, doc) {
@@ -114,6 +199,7 @@ exports.getBackdropImage = async (req, res) => {
 
       const gridFile = await GridFile.findById(id);
 
+
       const fileName = gridFile._id + gridFile.filename;
       const filePath = path.join(__dirname, fileName);
 
@@ -128,8 +214,6 @@ exports.getBackdropImage = async (req, res) => {
 
         await gridFile.download(fileStream, (err) => {
           res.sendFile(filePath, function (err) {
-            if (err) {
-            }
             fs.unlink(filePath, (err) => {
               console.log("File deleted");
             });
@@ -158,9 +242,9 @@ exports.insertProfileImage = async (req, res) => {
         // delete the file from local folder
         fs.unlinkSync(file.path);
 
-        const email = req.files[0].fieldname;
-        Employer.findOneAndUpdate(
-          { email: email },
+        const studentID = req.files[0].fieldname;
+        Student.findOneAndUpdate(
+          { studentID: studentID },
           { profileImageID: gridFile._id },
           { upsert: true },
           function (err, doc) {
@@ -183,8 +267,8 @@ exports.getProfileImage = async (req, res) => {
   try {
     if (req.params) {
       const id = req.params.profileImageID;
-
       const gridFile = await GridFile.findById(id);
+
 
       const fileName = gridFile._id + gridFile.filename;
       const filePath = path.join(__dirname, fileName);
@@ -200,9 +284,6 @@ exports.getProfileImage = async (req, res) => {
 
         await gridFile.download(fileStream, (err) => {
           res.sendFile(filePath, function (err) {
-            if (err) {
-              console.log;
-            }
             fs.unlink(filePath, (err) => {
               console.log("File deleted");
             });
@@ -216,12 +297,4 @@ exports.getProfileImage = async (req, res) => {
   } catch (err) {
     console.log(err);
   }
-};
-
-exports.userBoard = (req, res) => {
-  res.status(200).send("Logged in as User");
-};
-
-exports.adminBoard = (req, res) => {
-  res.status(200).send("Logged in as Admin");
 };
