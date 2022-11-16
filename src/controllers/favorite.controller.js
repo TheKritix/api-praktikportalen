@@ -4,7 +4,8 @@ const Favorite = db.favorite;
 
 exports.postFavorite = (req, res) => {
     const post = new Favorite({
-        favorites: req.body.favorites
+        uid: req.body.uid,
+        favorite: req.body.favorite
     })
     post.save((err, post) => {
         if (err){

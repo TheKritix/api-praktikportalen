@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
 
 const favoriteSchema = mongoose.Schema({
-    studentID: String,
-    favorites: [String]
+    uid: String,
+    favorite: String
 })
 
 module.exports = Object.freeze({
