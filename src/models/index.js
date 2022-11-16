@@ -5,6 +5,7 @@ module.exports = Object.freeze({
   refreshToken: require("./refreshToken.model.js"),
   ROLES: ["user", "admin"],
   feedback: require("./feedback.model.js"),
-  post: require("./post.model.js"), 
+  favorite: require("./favorite.model.js"),
+  post: require("./post.model.js"),
   gridFile: require("./gridFile.model.js"),
 });
