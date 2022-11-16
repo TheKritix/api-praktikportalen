@@ -7,5 +7,5 @@ module.exports = Object.freeze({
   feedback: require("./feedback.model.js"),
   favorite: require("./favorite.model.js"),
   post: require("./post.model.js"),
-  gridFile: require("./gridFile.model.js"),
+  gridFile: require("./gridfile.model.js"),
 });
