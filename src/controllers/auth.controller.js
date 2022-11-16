@@ -73,6 +73,9 @@ exports.studentSignin = async (req, res) => {
           roles: authorities,
           accessToken: token,
           refreshToken: refreshToken,
+          backdropImageID: student.backdropImageID,
+          profileImageID: student.profileImageID,
+          description: student.description,
         });
       });
   } else {
@@ -120,6 +123,7 @@ const signIn = (studentID, res) => {
       for (let i = 0; i < student.roles.length; i++) {
         authorities.push("ROLE_" + student.roles[i].name.toUpperCase());
       }
+
       console.log("Roless" + authorities);
       res.status(200).send({
         id: student._id,
@@ -129,6 +133,9 @@ const signIn = (studentID, res) => {
         roles: authorities,
         accessToken: token,
         refreshToken: refreshToken,
+        backdropImageID: student.backdropImageID,
+        profileImageID: student.profileImageID,
+        description: student.description,
       });
     });
 };
@@ -242,6 +249,9 @@ exports.employerSignin = (req, res) => {
         accessToken: token,
         refreshToken: refreshToken,
         position: employer.position,
+        backdropImageID: employer.backdropImageID,
+        profileImageID: employer.profileImageID,
+        description: employer.description,
       });
     });
 };

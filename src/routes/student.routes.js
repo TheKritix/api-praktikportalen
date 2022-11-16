@@ -23,5 +23,15 @@ const upload = multer({ dest: path.join(__dirname, '.') })
   
   router.get ('/pdfCVDownload/:downloadID', controller.getPDFDownload)
 
+  router.put ("/studentBackdropImg", [authJwt.verifyToken],  upload.any(), controller.insertBackdropImage)
+  router.put ("/studentProfileImg", [authJwt.verifyToken], upload.any(), controller.insertProfileImage)
+
+  router.get ("/studentBackdropImg/:backdropImageID", [authJwt.verifyToken], controller.getBackdropImage)
+  router.get ("/studentProfileImg/:profileImageID", [authJwt.verifyToken], controller.getProfileImage)
+
+  router.get ("/student/:studentID", [authJwt.verifyToken], controller.getStudent)
+
+  router.put("/studentName", [authJwt.verifyToken], controller.setStudentName)
+  router.put("/studentDescription", [authJwt.verifyToken], controller.setStudentDescription)
 
   module.exports = router;
