@@ -39,6 +39,7 @@ exports.createPost = (req, res) => {
     })
 
     exports.insertBannerImage = async (req, res) => {
+        console.log("hey")
         try {
             if (req.files) {
                 const promises = req.files.map(async (file) => {
