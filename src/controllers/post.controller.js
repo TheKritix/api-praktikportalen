@@ -48,16 +48,16 @@ exports.insertBannerImage = async (req, res) => {
                 const fileStream = fs.createReadStream(file.path);
 
                 //upload file to gridfs
-                const gridFile = new gridFile({ filename: file.originalname });
+                const gridFile = new GridFile({ filename: file.originalname });
                 await gridFile.upload(fileStream);
 
                 // delete the file from local folder
                 fs.unlinkSync(file.path);
 
                 //fix så den finder rigtige id
-                const title = req.files[0].fieldname;
+                const postID = req.files[0].fieldname;
                 Post.findOneAndUpdate(
-                   { title: title },
+                   { postID: postID },
                    { bannerImageID: gridFile._id },
                    { upsert: true },
                    function (err, doc) {
@@ -69,6 +69,7 @@ exports.insertBannerImage = async (req, res) => {
             });
 
             await Promise.all(promises);
+            console.log("hej igen")
         }
         res.sendStatus(201);
     } catch (err) {
