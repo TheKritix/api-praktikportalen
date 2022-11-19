@@ -41,7 +41,6 @@ exports.createPost = (req, res) => {
 }
 
 exports.insertBannerImage = async (req, res) => {
-    console.log("hey")
     try {
         if (req.files) {
             const promises = req.files.map(async (file) => {
@@ -54,10 +53,10 @@ exports.insertBannerImage = async (req, res) => {
                 // delete the file from local folder
                 fs.unlinkSync(file.path);
 
-                //fix så den finder rigtige id
-                const postID = req.files[0].fieldname;
+                //Skal ikke bruge title, skal bruge objectId fra post
+                const title = req.files[0].fieldname;
                 Post.findOneAndUpdate(
-                   { postID: postID },
+                   { title: title },
                    { bannerImageID: gridFile._id },
                    { upsert: true },
                    function (err, doc) {
@@ -69,7 +68,6 @@ exports.insertBannerImage = async (req, res) => {
             });
 
             await Promise.all(promises);
-            console.log("hej igen")
         }
         res.sendStatus(201);
     } catch (err) {
