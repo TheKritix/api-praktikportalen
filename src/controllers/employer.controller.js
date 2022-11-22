@@ -3,6 +3,7 @@ const Employer = db.employer;
 const fs = require("fs");
 const GridFile = db.gridFile;
 const path = require("path");
+var bcrypt = require("bcryptjs");
 
 exports.allAccess = (req, res) => {
   res.status(200).send("All Access");
@@ -72,6 +73,36 @@ exports.insertEmployeePosition = (req, res) => {
     }
   );
 };
+
+exports.updateEmail = (req, res) => {
+  Employer.findOneAndUpdate(
+    { username: req.body.username},
+    { email: req.body.email },
+    { upsert: true},
+    function (err) {
+      if (err) {
+        return res.status(500).send({ message: err });
+      } else {
+        return res.status(200).send({ message: "Student email updated" });
+      }
+    }
+  )
+}
+
+exports.updatePassword = (req, res) => {
+  Employer.findOneAndUpdate(
+    { username: req.body.username},
+    { password: bcrypt.hashSync(req.body.password, 8) },
+    { upsert: true},
+    function (err) {
+      if (err) {
+        return res.status(500).send({ message: err });
+      } else {
+        return res.status(200).send({ message: "Student password updated" });
+      }
+    }
+  )
+}
 
 exports.insertBackdropImage = async (req, res) => {
   try {

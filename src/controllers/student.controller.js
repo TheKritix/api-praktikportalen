@@ -30,6 +30,21 @@ exports.setStudentName = (req, res) => {
   );
 };
 
+exports.updateEmail = (req, res) => {
+  Student.findOneAndUpdate(
+    { studentID: req.body.studentID },
+    { email: req.body.email },
+    { upsert: true},
+    function (err) {
+      if (err) {
+        return res.status(500).send({ message: err });
+      } else {
+        return res.status(200).send({ message: "Student email updated" });
+      }
+    }
+  )
+}
+
 exports.setStudentDescription = (req, res) => {
   Student.findOneAndUpdate(
     { studentID: req.body.studentID },
