@@ -44,15 +44,3 @@ exports.deleteFavorite = (req, res) => {
         }
     )
 }
-
-/*
-exports.deleteFavorite = (req, res) => {
-    Favorite.findOne({
-        _id: req.body._id
-    }).remove((err) => {
-        if (err){
-            res.status(500).send({message: err});
-        }
-        res.send({message: "Favorite was successfully deleted"})
-    })
-}*/
