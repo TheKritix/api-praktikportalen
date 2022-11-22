@@ -1,4 +1,5 @@
 const { verifySignUp } = require("../middleware");
+const { authJwt } = require("../middleware");
 const express = require("express");
 const controller = require("../controllers/auth.controller");
 const router = express.Router();
@@ -26,6 +27,8 @@ router.post(
 router.post("/auth/signin", controller.employerSignin);
 
 router.post("/auth/refreshtoken", controller.refreshToken);
+
+router.get("/auth/checkToken", [authJwt.verifyToken], controller.checkToken);
 
 router.post("/auth/studentsignin", controller.studentSignin);
 
