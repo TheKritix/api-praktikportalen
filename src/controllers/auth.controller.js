@@ -8,24 +8,34 @@ const axios = require("axios");
 const xml2js = require("xml-js");
 var jwt = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
+require("dotenv").config();
 global.stuID = "";
 global.stuName = "";
 global.stuEmail = "";
 
 exports.studentSignin = async (req, res) => {
-  const { data } = await axios.get("https://auth.dtu.dk/dtu/validate", {
+  const { data } = await axios.get("https://auth.dtu.dk/dtu/servicevalidate", {
     params: {
       service: "http://localhost:3001/dtu-praktikportalen",
       ticket: req.body.ticket,
     },
   });
-  const studentID = data.split("\n")[1];
-  console.log(studentID);
+  const output = xml2js.xml2js(data, { compact: false, spaces: 4 });
   console.log("SignIn data length" + data.length);
-  if (data.length === 11 && req.body.ticket) {
+  console.log("SignIn data" + data);
+  if (data.length > 700 && req.body.ticket) {
+    const studentEmail =
+      output.elements[0].elements[0].elements[1].elements[0].elements[1]
+        .elements[0].text;
+    const studentID =
+      output.elements[0].elements[0].elements[0].elements[0].text;
+    const studentName =
+      output.elements[0].elements[0].elements[1].elements[0].elements[4]
+        .elements[0].text;
     stuID = studentID;
-
-    console.log(studentID);
+    stuName = studentName;
+    stuEmail = studentEmail;
+    console.log(studentEmail);
 
     Student.findOne({
       studentID: studentID,
@@ -68,6 +78,8 @@ exports.studentSignin = async (req, res) => {
           description: student.description,
         });
       });
+  } else {
+    res.status(500).send({ message: "Invalid Ticket" });
   }
 };
 
@@ -242,6 +254,10 @@ exports.employerSignin = (req, res) => {
         description: employer.description,
       });
     });
+};
+exports.checkToken = (req, res) => {
+  console.log("checkAccessToken");
+  res.status(200).send({ message: "Valid Token" });
 };
 
 exports.refreshToken = async (req, res) => {

@@ -12,8 +12,8 @@ router.use(function (req, res, next) {
   });
 
 
-router.post("/favorite", controller.postFavorite);
-router.get("/favorite", controller.getFavorite);
-router.delete("/favorite/delete", controller.deleteFavorite);
+router.post("/favorite", [authJwt.verifyToken] ,controller.postFavorite);
+router.get("/favorite", [authJwt.verifyToken], controller.getFavorite);
+router.put("/favorite", [authJwt.verifyToken], controller.deleteFavorite);
 
 module.exports = router;

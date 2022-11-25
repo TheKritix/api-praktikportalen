@@ -1,7 +1,8 @@
 //Source https://hevodata.com/learn/building-a-secure-node-js-rest-api/
 
 require("dotenv").config();
-
+const Sentry = require("@sentry/node");
+const Tracing = require("@sentry/tracing");
 const mongoose = require("mongoose");
 
 const express = require("express");
@@ -12,16 +13,44 @@ const helmet = require("helmet");
 const morgan = require("morgan");
 const modelContainer = require("./models");
 const Role = modelContainer.role;
-
+const Feedback = modelContainer.feedback;
 const app = express();
+
+Sentry.init({
+  dsn: "https://d379325516ec46c0b965a639d93a1474@o4504161998798848.ingest.sentry.io/4504162013085696",
+  integrations: [
+    // enable HTTP calls tracing
+    new Sentry.Integrations.Http({ tracing: true }),
+    // enable Express.js middleware tracing
+    new Tracing.Integrations.Express({ app }),
+  ],
+
+  // Set tracesSampleRate to 1.0 to capture 100%
+  // of transactions for performance monitoring.
+  // We recommend adjusting this value in production
+  tracesSampleRate: 1.0,
+});
 
 const __user = process.env.MONGO_INITDB_ROOT_USERNAME;
 const __password = process.env.MONGO_INITDB_ROOT_PASSWORD;
 const __host = process.env.MONGO_INITDB_HOST;
-console.log(__user, __password, __host);
 
-//const mongoDBUri = `mongodb://${__user}:${__password}@${__host}/admin`;
 const mongoDBUri = `mongodb://${__user}:${__password}@${__host}/admin`;
+
+app.use(Sentry.Handlers.requestHandler());
+app.use(Sentry.Handlers.tracingHandler());
+app.get("/", function rootHandler(req, res) {
+  res.end("Root endpoint");
+});
+
+app.use(Sentry.Handlers.errorHandler());
+
+app.use(function onError(err, req, res, next) {
+  // The error id is attached to `res.sentry` to be returned
+  // and optionally displayed to the user for support.
+  res.statusCode = 500;
+  res.end(res.sentry + "\n");
+});
 
 mongoose
   .connect(
