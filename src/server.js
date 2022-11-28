@@ -70,11 +70,11 @@ mongoose
     process.exit();
   });
 
-var corsOptions = {
-  origin: "https://dtu.praktikportal.diplomportal.dk",
-};
-
-var whitelist = ["https://dtu.praktikportal.diplomportal.dk", "http://localhost:3001"];
+//Source: https://www.npmjs.com/package/cors#configuring-cors-w-dynamic-origin
+var whitelist = [
+  "https://dtu.praktikportal.diplomportal.dk",
+  "http://localhost:3001",
+];
 var corsOptions = {
   origin: function (origin, callback) {
     if (whitelist.indexOf(origin) !== -1) {
