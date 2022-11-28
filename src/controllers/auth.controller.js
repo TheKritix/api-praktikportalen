@@ -255,6 +255,10 @@ exports.employerSignin = (req, res) => {
       });
     });
 };
+exports.checkToken = (req, res) => {
+  console.log("checkAccessToken");
+  res.status(200).send({ message: "Valid Token" });
+};
 
 exports.refreshToken = async (req, res) => {
   const { refreshToken: requestToken } = req.body;

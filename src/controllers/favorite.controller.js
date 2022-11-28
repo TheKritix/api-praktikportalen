@@ -31,12 +31,16 @@ exports.getFavorite = (req, res) => {
 
 
 exports.deleteFavorite = (req, res) => {
-    Favorite.findOne({
-        _id: req.body._id
-    }).remove((err) => {
-        if (err){
-            res.status(500).send({message: err});
+    console.log(req.body)
+    console.log(req.body)
+    Favorite.findOneAndDelete(
+        {uid: req.body.uid, favorite: req.body.favorite}, function(err, docs) {
+            if (err) {
+                console.log(err)
+                res.status(500).send({message: err})
+            } else {
+                res.send({message: "Favorite was successfully deleted"})
+            }
         }
-        res.send({message: "Favorite was successfully deleted"})
-    })
+    )
 }
