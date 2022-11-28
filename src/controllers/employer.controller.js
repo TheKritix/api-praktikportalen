@@ -162,7 +162,6 @@ exports.getBackdropImage = async (req, res) => {
             if (err) {
             }
             fs.unlink(filePath, (err) => {
-              console.log("File deleted");
             });
           });
         });
@@ -172,7 +171,7 @@ exports.getBackdropImage = async (req, res) => {
       }
     }
   } catch (err) {
-    console.log(err);
+    console.log("No backdrop image found");
   }
 };
 
@@ -235,7 +234,6 @@ exports.getProfileImage = async (req, res) => {
               console.log;
             }
             fs.unlink(filePath, (err) => {
-              console.log("File deleted");
             });
           });
         });
@@ -245,7 +243,7 @@ exports.getProfileImage = async (req, res) => {
       }
     }
   } catch (err) {
-    console.log(err);
+    console.log("No profile image found");
   }
 };
 
