@@ -16,7 +16,7 @@ global.stuEmail = "";
 exports.studentSignin = async (req, res) => {
   const { data } = await axios.get("https://auth.dtu.dk/dtu/servicevalidate", {
     params: {
-      service: "http://localhost:3001/dtu-praktikportalen",
+      service: process.env.SERVICE_LOCAL,
       ticket: req.body.ticket,
     },
   });
