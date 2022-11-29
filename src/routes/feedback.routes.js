@@ -12,7 +12,7 @@ router.use(function (req, res, next) {
   });
 
 
-router.post("/feedback", controller.postFeedback);
+router.post("/feedback", [authJwt.verifyToken], controller.postFeedback);
 router.get("/feedback", controller.getFeedback);
 router.delete("/feedback/delete", controller.deleteFeedback);
 

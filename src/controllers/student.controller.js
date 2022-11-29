@@ -230,7 +230,6 @@ exports.getBackdropImage = async (req, res) => {
         await gridFile.download(fileStream, (err) => {
           res.sendFile(filePath, function (err) {
             fs.unlink(filePath, (err) => {
-              console.log("File deleted");
             });
           });
         });
@@ -240,7 +239,7 @@ exports.getBackdropImage = async (req, res) => {
       }
     }
   } catch (err) {
-    console.log(err);
+    console.log("No backdrop image found");
   }
 };
 
@@ -300,7 +299,6 @@ exports.getProfileImage = async (req, res) => {
         await gridFile.download(fileStream, (err) => {
           res.sendFile(filePath, function (err) {
             fs.unlink(filePath, (err) => {
-              console.log("File deleted");
             });
           });
         });
@@ -310,6 +308,6 @@ exports.getProfileImage = async (req, res) => {
       }
     }
   } catch (err) {
-    console.log(err);
+    console.log("No profile image found");
   }
 };
