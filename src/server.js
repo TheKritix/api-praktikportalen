@@ -70,8 +70,19 @@ mongoose
     process.exit();
   });
 
+//Source: https://www.npmjs.com/package/cors#configuring-cors-w-dynamic-origin
+var whitelist = [
+  "https://dtu.praktikportal.diplomportal.dk",
+  "http://localhost:3001",
+];
 var corsOptions = {
-  origin: "https://dtu.praktikportal.diplomportal.dk",
+  origin: function (origin, callback) {
+    if (whitelist.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
 };
 
 app.use(cors(corsOptions));
