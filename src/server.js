@@ -1,5 +1,5 @@
 //Source https://hevodata.com/learn/building-a-secure-node-js-rest-api/
-
+// Source Sentry: https://docs.sentry.io/platforms/node/guides/express/
 require("dotenv").config();
 const Sentry = require("@sentry/node");
 const Tracing = require("@sentry/tracing");
