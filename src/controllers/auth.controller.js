@@ -12,7 +12,8 @@ require("dotenv").config();
 global.stuID = "";
 global.stuName = "";
 global.stuEmail = "";
-
+// Source: DTU CAS Dokumentation
+// https://docs.google.com/document/d/12HXLyYZ_Xmigt9Jy4UcKTGTwomE6HxiN/edit?usp=sharing&ouid=100718859747511911046&rtpof=true&sd=true
 exports.studentSignin = async (req, res) => {
   const { data } = await axios.get("https://auth.dtu.dk/dtu/servicevalidate", {
     params: {
@@ -20,6 +21,7 @@ exports.studentSignin = async (req, res) => {
       ticket: req.body.ticket,
     },
   });
+  //https://www.npmjs.com/package/xml-js
   const output = xml2js.xml2js(data, { compact: false, spaces: 4 });
   console.log("SignIn data length" + data.length);
   console.log("SignIn data" + data);
@@ -200,7 +202,6 @@ exports.employerSignup = (req, res) => {
 };
 
 exports.employerSignin = (req, res) => {
-  console.log("das ist eine sehr nice employer");
   Employer.findOne({
     username: req.body.username,
   })
@@ -214,7 +215,7 @@ exports.employerSignin = (req, res) => {
       if (!employer) {
         return res.status(404).send({ message: "User Not found." });
       }
-
+      // Source: https://www.npmjs.com/package/bcryptjs
       var passwordIsValid = bcrypt.compareSync(
         req.body.password,
         employer.password
@@ -226,7 +227,7 @@ exports.employerSignin = (req, res) => {
           message: "Invalid Password!",
         });
       }
-
+      // Source: https://www.npmjs.com/package/jsonwebtoken
       var token = jwt.sign({ id: employer.id }, config.secret, {
         expiresIn: config.jwtExpiration, // 24 hours
       });

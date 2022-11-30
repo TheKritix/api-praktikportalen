@@ -55,7 +55,7 @@ exports.getEmployer = (req, res) => {
       position: doc.position,
       backdropImageID: doc.backdropImageID,
       profileImageID: doc.profileImageID,
-      description: doc.description
+      description: doc.description,
     };
 
     res.send(employer);
@@ -76,9 +76,9 @@ exports.insertEmployeePosition = (req, res) => {
 
 exports.updateEmail = (req, res) => {
   Employer.findOneAndUpdate(
-    { username: req.body.username},
+    { username: req.body.username },
     { email: req.body.email },
-    { upsert: true},
+    { upsert: true },
     function (err) {
       if (err) {
         return res.status(500).send({ message: err });
@@ -86,14 +86,14 @@ exports.updateEmail = (req, res) => {
         return res.status(200).send({ message: "Student email updated" });
       }
     }
-  )
-}
+  );
+};
 
 exports.updatePassword = (req, res) => {
   Employer.findOneAndUpdate(
-    { username: req.body.username},
+    { username: req.body.username },
     { password: bcrypt.hashSync(req.body.password, 8) },
-    { upsert: true},
+    { upsert: true },
     function (err) {
       if (err) {
         return res.status(500).send({ message: err });
@@ -101,9 +101,9 @@ exports.updatePassword = (req, res) => {
         return res.status(200).send({ message: "Student password updated" });
       }
     }
-  )
-}
-
+  );
+};
+// Source: https://abskmj.github.io/notes/posts/express/express-multer-mongoose-gridfile/
 exports.insertBackdropImage = async (req, res) => {
   try {
     if (req.files) {
@@ -137,7 +137,7 @@ exports.insertBackdropImage = async (req, res) => {
     console.log(err);
   }
 };
-
+// Source: https://abskmj.github.io/notes/posts/express/express-multer-mongoose-gridfile/
 exports.getBackdropImage = async (req, res) => {
   try {
     if (req.params) {
@@ -161,8 +161,7 @@ exports.getBackdropImage = async (req, res) => {
           res.sendFile(filePath, function (err) {
             if (err) {
             }
-            fs.unlink(filePath, (err) => {
-            });
+            fs.unlink(filePath, (err) => {});
           });
         });
       } else {
@@ -174,7 +173,7 @@ exports.getBackdropImage = async (req, res) => {
     console.log("No backdrop image found");
   }
 };
-
+// Source: https://abskmj.github.io/notes/posts/express/express-multer-mongoose-gridfile/
 exports.insertProfileImage = async (req, res) => {
   try {
     if (req.files) {
@@ -208,7 +207,7 @@ exports.insertProfileImage = async (req, res) => {
     console.log(err);
   }
 };
-
+// Source: https://abskmj.github.io/notes/posts/express/express-multer-mongoose-gridfile/
 exports.getProfileImage = async (req, res) => {
   try {
     if (req.params) {
@@ -233,8 +232,7 @@ exports.getProfileImage = async (req, res) => {
             if (err) {
               console.log;
             }
-            fs.unlink(filePath, (err) => {
-            });
+            fs.unlink(filePath, (err) => {});
           });
         });
       } else {

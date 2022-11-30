@@ -1,7 +1,8 @@
 const mongoose = require("mongoose");
 const config = require("../config/auth.config");
 const { v4: uuidv4 } = require("uuid");
-
+// Source: https://www.npmjs.com/package/uuid
+// Set expiration date for refresh token
 const RefreshTokenSchema = new mongoose.Schema({
   token: String,
   user: {
